@@ -1,4 +1,4 @@
 # QMLReports
 
-Create a PDF file from QML.
+Create a PDF file from QML.<br>
 See licence to use
