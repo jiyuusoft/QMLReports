@@ -10,12 +10,20 @@ ApplicationWindow {
     height: 100
     title: qsTr("QMLReports")
 
-    /*Report {
+    Report {
         fileName: "/Users/charlie/test.pdf"
     }
-    */
 
 
+    ReportContent {
+        id: content
+        htmlText: "Toto le rigolo"
+        size: "30"
+        family: "verdana"
+        style: "italic"
+    }
+
+/*
     Reports {
         id: reports
         fileName: "/Users/charlie/test.pdf"
@@ -25,8 +33,7 @@ ApplicationWindow {
 <img src='qrc:/img/kdab.jpeg'>"
 
         contentHtml1:
-"<div style='color:blue ; font-family:verdana ; font-style:italic ; font-size:30px ; font-weight:bold ; text-decoration:overline ; ' >
-K<sub>max</sub>=K<sub>2</sub> &middot; <br><br><br><br><b>3fd</b>fdsufhufuishfcuifhuicnfgdfjgfsdfehfiuevfvvfgfg   dfhzeiufezui huifheiufh huihfeiuf huiehguiehr
+"K<sub>max</sub>=K<sub>2</sub> &middot; <br><br><br><br><b>3fd</b>fdsufhufuishfcuifhuicnfgdfjgfsdfehfiuevfvvfgfg   dfhzeiufezui huifheiufh huihfeiuf huiehguiehr
 kdfdjhff hgiheh hfguhgjhe hgrehgh<br><br><br>rgjhiher ghirhgierh ghirhgi gh ghrgh hrhgk h rghrekgherk
 <br><br><br><br><br><br><br>
 <table border=1>
@@ -34,7 +41,7 @@ kdfdjhff hgiheh hfguhgjhe hgrehgh<br><br><br>rgjhiher ghirhgierh ghirhgi gh ghrg
      <tr><td valign='middle'>Toto20</td><td align='right'>super mega <br>Toto21</td></tr>
      <tr><td colspan='2' align='center'>Toto3</td></tr>
 </table><br>
- <img src=':/img/Qt.png'><br><br><br><br><br><br><br><br><br><br><br><br><br><br></div>";
+ <img src=':/img/Qt.png'><br><br><br><br><br><br><br><br><br><br><br><br><br><br>";
 
         contentHtml2: "
 <div style='color:blue ; font-family:verdana ; font-style:italic ; font-size:30px ; font-weight:bold '>
@@ -54,4 +61,6 @@ para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br
             //reports.print()
         }
     }
+    */
+
 }

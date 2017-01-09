@@ -3,6 +3,7 @@
 #include "qmlreports.h"
 #include "qmlreportsreport.h"
 
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -10,6 +11,7 @@ int main(int argc, char *argv[])
 
 
     qmlRegisterType<QMLReportsReport>("QMLReports", 1, 0, "Report");
+    qmlRegisterType<QMLReportsContent>("QMLReports", 1, 0, "ReportContent");
     qmlRegisterType<QMLReports>("QMLReports", 1, 0, "Reports");
 
     QQmlApplicationEngine engine;

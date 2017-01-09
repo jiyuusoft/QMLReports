@@ -19,7 +19,8 @@ class QMLReportsReport : public QObject, public QPainter
     //Q_PROPERTY(QObject logo READ logo WRITE setLogo NOTIFY logoChanged)
 
 public:
-    explicit QMLReportsReport(QString fileName="", qreal margin=10, qreal resolution=300);
+    //explicit QMLReportsReport(QString fileName="", qreal margin=10, qreal resolution=300, QObject *parent=0);
+    explicit QMLReportsReport(QString fileName="", QObject *parent=0);
 
 signals:
     void fileNameChanged();
@@ -39,6 +40,7 @@ public slots:
 
     /*    QML   */
 
+    void init();
     qreal mm2px(int mm){return mm * 0.039370147 * m_writer->resolution();}
     qreal px2mm(int px){return px / 0.039370147 / m_writer->resolution();}
     qreal widthMM();

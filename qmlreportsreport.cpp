@@ -1,13 +1,19 @@
 #include "qmlreportsreport.h"
 
-QMLReportsReport::QMLReportsReport(QString fileName, qreal margin, qreal resolution)
+//QMLReportsReport::QMLReportsReport(QString fileName, qreal margin, qreal resolution, QObject *parent)
+QMLReportsReport::QMLReportsReport(QString fileName, QObject *parent)
 {
     /*    IDEES
      *    - inclure les logos et footer dans les marges ?
      *
      */
 
-    this->m_writer = new QPdfWriter(fileName);
+    this->connect(this, SIGNAL(fileNameChanged()), this, SLOT(init()));
+    qreal margin = 10;
+    qreal resolution = 300;
+    QString fileName2 = "/Users/charlie/test.pdf";
+
+    this->m_writer = new QPdfWriter(fileName2);
     this->setResolution(resolution);
     this->m_margin = margin;
     QPageSize pageSize(QPageSize::A4);
@@ -15,14 +21,30 @@ QMLReportsReport::QMLReportsReport(QString fileName, qreal margin, qreal resolut
     QPageLayout pageLayout(pageSize, QPageLayout::Portrait, margins, QPageLayout::Millimeter);
     this->m_writer->setPageLayout(pageLayout);
 
-    m_rectContent = new QRectF(0, 0, m_writer->width(), m_writer->height());
-    m_heightContentAvailable = m_writer->height();
+    //m_rectContent = new QRectF(0, 0, m_writer->width(), m_writer->height());
+    //m_heightContentAvailable = m_writer->height();
 
-    this->begin(this->m_writer);
+
+    if (this->begin(this->m_writer)){
+        qDebug () << "Ca fonctionne";
+    }
+     else{qDebug() << "Painter rencontre un souci" ;}
+
+}
+
+void QMLReportsReport::init()
+{
+    qDebug() << "toto";
+    /*
+     * mettre ici le code pour initialiser le painter
+     *
+     */
 }
 
 QString QMLReportsReport::fileName() const
 {
+
+    //this->begin(this->m_writer);
     return m_fileName;
 }
 
