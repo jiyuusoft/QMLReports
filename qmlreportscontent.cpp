@@ -35,12 +35,12 @@ void QMLReportsContent::setFamily(const QString &a)
     }
 }
 
-QString QMLReportsContent::size() const
+int QMLReportsContent::size() const
 {
     return m_size;
 }
 
-void QMLReportsContent::setSize(const QString &a)
+void QMLReportsContent::setSize(const int &a)
 {
 
     if (a != m_size) {
@@ -106,28 +106,11 @@ void QMLReportsContent::setHtmlText(const QString &a)
     }
 }
 
+qreal QMLReportsContent::xOffsetMM() const {return m_xOffsetMM;}
+void QMLReportsContent::setXOffsetMM(const qreal &a) {m_xOffsetMM = a;}
 
-void QMLReportsContent::setHtmlContent(QString html, QTextOption::WrapMode wrapMode)
-{
-    QString color = "blue";
-    QString family = "verdana";
-    QString style = "italic";
-    QString size = "30";
-    QString weight = "bold";
-    QString decoration  = "overline";
-    QString styleBegin = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; font-size:%4px ; font-weight:%5 ; text-decoration:%6 ; ' >").arg(color,
-                                                                                                                                                            family,
-                                                                                                                                                            style,
-                                                                                                                                                            size,
-                                                                                                                                                            weight,
-                                                                                                                                                            decoration);
-    QString styleEnd = "</div>";
-    QString textHtml = styleBegin + html + styleEnd;
-    QTextOption textOption;
-    textOption.setAlignment(Qt::AlignJustify);
-    textOption.setWrapMode(QTextOption::WordWrap);
-    //textOption.setWrapMode(wrapMode);
-    this->setDefaultTextOption(textOption);
+qreal QMLReportsContent::yOffsetMM() const {return m_yOffsetMM;}
+void QMLReportsContent::setYOffsetMM(const qreal &a) {m_yOffsetMM = a;}
 
-    this->setHtml(textHtml);
-}
+QString QMLReportsContent::align() const {return m_align;}
+void QMLReportsContent::setAlign(const QString &a) {m_align = a;}

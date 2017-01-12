@@ -79,6 +79,8 @@ void QMLReports::setContentHtml2(const QString &a)
 
 
 /* GENERATION DU RAPPORT */
+
+/*
 void QMLReports::test()
 {
     QString fileName = m_fileName;
@@ -98,6 +100,7 @@ void QMLReports::test()
     report.addContent(&qmlContent1);
     report.addContent(&qmlContent2);
 
-    report.end();
+    //report.end();
     QDesktopServices::openUrl(QUrl("file:"+fileName));
 }
+*/

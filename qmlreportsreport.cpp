@@ -1,196 +1,229 @@
 #include "qmlreportsreport.h"
 
-//QMLReportsReport::QMLReportsReport(QString fileName, qreal margin, qreal resolution, QObject *parent)
-QMLReportsReport::QMLReportsReport(QString fileName, QObject *parent)
+QMLReportsReport::QMLReportsReport(QObject *parent)
 {
-    /*    IDEES
-     *    - inclure les logos et footer dans les marges ?
-     *
-     */
-
-    this->connect(this, SIGNAL(fileNameChanged()), this, SLOT(init()));
-    qreal margin = 10;
-    qreal resolution = 300;
-    QString fileName2 = "/Users/charlie/test.pdf";
-
-    this->m_writer = new QPdfWriter(fileName2);
-    this->setResolution(resolution);
-    this->m_margin = margin;
-    QPageSize pageSize(QPageSize::A4);
-    QMarginsF margins(margin, margin, margin, margin);
-    QPageLayout pageLayout(pageSize, QPageLayout::Portrait, margins, QPageLayout::Millimeter);
-    this->m_writer->setPageLayout(pageLayout);
-
-    //m_rectContent = new QRectF(0, 0, m_writer->width(), m_writer->height());
-    //m_heightContentAvailable = m_writer->height();
-
-
-    if (this->begin(this->m_writer)){
-        qDebug () << "Ca fonctionne";
-    }
-     else{qDebug() << "Painter rencontre un souci" ;}
-
+    connect(this, SIGNAL(fileNameChanged()), this, SLOT(init()));
 }
 
 void QMLReportsReport::init()
 {
-    qDebug() << "toto";
-    /*
-     * mettre ici le code pour initialiser le painter
-     *
-     */
+
+    m_writer = new QPdfWriter(m_fileName);
+    m_writer->setResolution(m_resolution);
+    QPageSize pageSize(QPageSize::A4);
+    QMarginsF margins(m_margins, m_margins, m_margins, m_margins);
+    QPageLayout pageLayout(pageSize, QPageLayout::Portrait, margins, QPageLayout::Millimeter);
+    m_writer->setPageLayout(pageLayout);
+
+
+    m_rectContent = new QRectF(0, 0, m_writer->width(), m_writer->height());
+    //m_heightContentAvailable = m_writer->height();
 }
 
 QString QMLReportsReport::fileName() const
 {
-
-    //this->begin(this->m_writer);
     return m_fileName;
 }
 
-void QMLReportsReport::setFileName(const QString &a)
+void QMLReportsReport::setFileName(const QString &fileName)
 {
-
-    if (a != m_fileName) {
-        m_fileName = a;
+    if (fileName != m_fileName) {
+        m_fileName = fileName;
         emit fileNameChanged();
     }
 }
-/*
-QTextDocument QMLReportsReport::content() const
+
+int QMLReportsReport::resolution() const {return m_resolution;}
+void QMLReportsReport::setResolution(const int &resolution) {m_resolution = resolution;}
+
+qreal QMLReportsReport::margins() const {return m_margins;}
+void QMLReportsReport::setMargins(const qreal &margins) {m_margins = margins;}
+
+
+
+QMLReportsLogo *QMLReportsReport::logo() const
 {
-    return m_qmlContent;
+    return m_logo;
 }
 
-void QMLReportsReport::setContent(const QTextDocument &a)
+void QMLReportsReport::setLogo(QMLReportsLogo *logo)
 {
-
-    if (a != m_qmlContent) {
-        m_qmlContent = a;
-        emit contentChanged();
-    }
-}
-*/
-
-
-/*
-QObject *QMLReportsReport::logo()
-{
-    return m_qmlLogo;
-}
-
-void QMLReportsReport::setLogo(QObject &a)
-{
-    if (&a != m_qmlLogo) {
-        m_qmlLogo = &a;
-        emit logoChanged();
-    }
-}
-*/
-
-
-
-qreal QMLReportsReport::widthMM()
-{
-    return this->m_writer->widthMM();
-}
-
-void QMLReportsReport::setResolution(qreal resolution)
-{
-    this->m_writer->setResolution(resolution);
-}
-
-
-void QMLReportsReport::addPage()
-{
-    qDebug() << "Create a new page";
-    m_nbPage += 1;
-    m_heightContentAvailable = m_writer->height();
-
-    this->save();
-    this->m_writer->newPage();
-    this->translate(0, -m_totalHeightDoc);
-    m_totalHeightDoc = 0;
-    this->restore();
-
-    this->addLogo(m_logo, m_xLogoOffset, m_yLogoOffset);
-    this->addFooter(m_footer, m_xFooterOffset, m_yFooterOffset);
-
-    /*prévoir :
-     *   - mise en place de l'header automatiquement
-     *   - repartir au début de la page
-     *   - contrôle automatique
-     *   - mise en place du footer automatiquement
-     */
-}
-
-void QMLReportsReport::addLogo(QMLReportsLogo *logo, qreal xOffsetMM, qreal yOffsetMM)
-{
-    /* Merorize the xOffset ant yOffset, Add a logo to Document and return to X origine */
     m_logo = logo;
-    m_xLogoOffset = xOffsetMM;
-    m_yLogoOffset = yOffsetMM;
-    m_logoTotalHeight = m_logo->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-
-    qreal x, y;
-    x = mm2px(xOffsetMM);
-    y = m_totalHeightDoc + mm2px(yOffsetMM);
-
-    this->translate(x, y);
-    m_logo->drawContents(this);
-    m_totalHeightDoc += m_logo->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-    this->translate(-x, -y);
-
-    m_heightContentAvailable -=  m_logo->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-    m_rectContent->setHeight(m_heightContentAvailable);
 }
 
-void QMLReportsReport::addFooter(QMLReportsFooter *footer, qreal xOffsetMM, qreal yOffsetMM)
+QMLReportsFooter *QMLReportsReport::footer() const
 {
-    /* Add a HTML footer to Document and return to X origine */
+    return m_footer;
+}
+
+void QMLReportsReport::setFooter(QMLReportsFooter *footer)
+{
     m_footer = footer;
-    m_xFooterOffset = xOffsetMM;
-    m_yFooterOffset = yOffsetMM;
-
-    qreal x, y;
-    x = mm2px(xOffsetMM);
-    y = m_writer->height() - m_footer->documentLayout()->documentSize().height()+mm2px(yOffsetMM);
-
-    this->translate(x, y);
-    m_footer->setTextWidth(m_writer->width()-mm2px(xOffsetMM));
-    m_footer->drawContents(this);
-    this->translate(-x, -y);
-
-    m_heightContentAvailable -=  m_footer->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-    m_rectContent->setHeight(m_heightContentAvailable);
 }
 
-void QMLReportsReport::addContent(QMLReportsContent *content, qreal xOffsetMM, qreal yOffsetMM)
+QQmlListProperty<QMLReportsContent> QMLReportsReport::contents()
 {
-    /* Add a HTML content to Document and return to X origine */
-    m_content = content;
-    m_content->setTextWidth(m_writer->width()-mm2px(xOffsetMM));
-    m_totalContent += m_content->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
+    return QQmlListProperty<QMLReportsContent>(this, m_contents);
+}
 
-    qreal x, y;
-    x = mm2px(xOffsetMM);
-    y = m_totalHeightDoc + mm2px(yOffsetMM);
+int QMLReportsReport::contentsCount() const
+{
+    return m_contents.count();
+}
 
-    m_totalHeightDoc += m_content->documentLayout()->documentSize().height()+mm2px(yOffsetMM);
-
-    if (m_totalContent > m_nbPage * m_rectContent->height()) {
-        addPage();
-        this->translate(0, m_logoTotalHeight);
-        m_content->drawContents(this);
-        this->translate(-x, -y);
-    }
-    else {
-        this->translate(x, y);
-        m_content->drawContents(this);
-        this->translate(-x, -y);
-    }
-
+QMLReportsContent *QMLReportsReport::content(int index) const
+{
+    return m_contents.at(index);
 }
 
 
+void QMLReportsReport::print()
+{
+    m_painter = new QPainter(m_writer);
 
+    QTextDocument tdLogo;
+    QTextDocument tdFooter;
+    QTextDocument tdContent;
+    QTextOption textOptionLogo;
+    QTextOption textOptionFooter;
+    QTextOption textOptionContent;
+    qreal lastY;
+
+
+
+    /* Add an logo to PDF File */
+    if (m_logo->align() == "center"){
+        textOptionLogo.setAlignment(Qt::AlignHCenter);
+    }
+    else{
+        textOptionLogo.setAlignment(Qt::AlignJustify);
+    }
+    textOptionLogo.setWrapMode(QTextOption::WordWrap);
+    tdLogo.setDefaultTextOption(textOptionLogo);
+
+    QString styleBeginLogo = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
+                                "font-size:%4px ; font-weight:%5 ; text-decoration:%6'>"
+                                "").arg(m_logo->color(),
+                                        m_logo->family(),
+                                        m_logo->style(),
+                                        QString::number(m_logo->size()),
+                                        m_logo->weight(),
+                                        m_logo->decoration());
+    QString styleEndLogo = "</div>";
+    QString textHtmlLogo = styleBeginLogo + m_logo->htmlText() + styleEndLogo;
+    tdLogo.setTextWidth(m_writer->width());
+    tdLogo.setHtml(textHtmlLogo);
+
+    //m_xLogoOffset = xOffsetMM;
+    //m_yLogoOffset = yOffsetMM;
+    //m_logoTotalHeight = tdLogo.documentLayout()->documentSize().height() + mm2px(yOffsetMM);
+
+    qreal xLogo, yLogo;
+    xLogo = mm2px(m_logo->xOffsetMM());
+    yLogo = mm2px(m_logo->yOffsetMM());
+    lastY = yLogo + tdLogo.documentLayout()->documentSize().height();
+
+    m_painter->translate(xLogo, yLogo);
+    tdLogo.drawContents(m_painter);
+    m_painter->translate(-xLogo, -yLogo);
+
+    //m_totalHeightDoc += td.documentLayout()->documentSize().height() + mm2px(yOffsetMM);
+    //m_totalHeightDoc += m_logo->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
+
+
+    //m_heightContentAvailable -=  m_logo->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
+    //m_heightContentAvailable -=  td.documentLayout()->documentSize().height() + mm2px(yOffsetMM);
+
+    //m_rectContent->setHeight(m_heightContentAvailable);
+
+
+
+    //=======================================//
+
+    /* Add a Footer to PDF File */
+
+    if (m_footer->align() == "center"){
+        textOptionFooter.setAlignment(Qt::AlignHCenter);
+    }
+    else{
+        textOptionFooter.setAlignment(Qt::AlignJustify);
+    }
+    textOptionFooter.setWrapMode(QTextOption::WordWrap);
+    tdFooter.setDefaultTextOption(textOptionFooter);
+
+    QString styleBeginFooter = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
+                                  "font-size:%4px ; font-weight:%5 ; text-decoration:%6'>"
+                                  "").arg(m_footer->color(),
+                                          m_footer->family(),
+                                          m_footer->style(),
+                                          QString::number(m_footer->size()),
+                                          m_footer->weight(),
+                                          m_footer->decoration());
+
+
+    QString styleEndFooter = "</div>";
+    QString textHtmlFooter = styleBeginFooter + m_footer->htmlText() + styleEndFooter;
+    tdFooter.setTextWidth(m_writer->width());
+    tdFooter.setHtml(textHtmlFooter);
+
+    qreal xFooter, yFooter;
+    xFooter = mm2px(m_footer->xOffsetMM());
+    yFooter = m_writer->height() + mm2px(m_footer->yOffsetMM()) - tdFooter.documentLayout()->documentSize().height();
+
+    m_painter->translate(xFooter, yFooter);
+    tdFooter.drawContents(m_painter);
+    m_painter->translate(-xFooter, -yFooter);
+
+
+    //=======================================//
+
+    /* Add Contents to PDF File */
+
+    qDebug() << "lastY" << lastY;
+    qDebug() << "height logo" << tdLogo.documentLayout()->documentSize().height();
+
+    for (int i=0; i < m_contents.length(); i++){
+        QMLReportsContent *content = m_contents.at(i);
+        if (content->align() == "center"){
+            textOptionContent.setAlignment(Qt::AlignHCenter);
+        }
+        else{
+            textOptionContent.setAlignment(Qt::AlignJustify);
+        }
+
+        textOptionContent.setWrapMode(QTextOption::WordWrap);
+        tdContent.setDefaultTextOption(textOptionContent);
+        tdContent.setTextWidth(m_writer->width());
+
+        QString styleBeginContent = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
+                                       "font-size:%4px ; font-weight:%5 ; text-decoration:%6'>"
+                                       "").arg(content->color(),
+                                               content->family(),
+                                               content->style(),
+                                               QString::number(content->size()),
+                                               content->weight(),
+                                               content->decoration());
+
+        QString styleEndContent = "</div>";
+        QString textHtmlContent = styleBeginContent + content->htmlText() + styleEndContent;
+        tdContent.setHtml(textHtmlContent);
+
+        qreal xContent, yContent;
+        xContent = mm2px(content->xOffsetMM());
+        yContent = lastY + mm2px(content->yOffsetMM());
+        m_painter->translate(xContent, yContent);
+        tdContent.drawContents(m_painter);
+        m_painter->translate(-xContent, -yContent);
+        lastY += tdContent.documentLayout()->documentSize().height();
+
+        //qDebug() << textHtmlContent;
+        //qDebug() <<"x:" << xContent << " -  y:" << yContent << " -  height:" << tdContent.documentLayout()->documentSize().height();
+        //qDebug() << lastY;
+        //qDebug() << "    ";
+    }
+
+
+    if (m_painter->end()){
+        QDesktopServices::openUrl(QUrl("file:"+m_fileName));
+    }
+}

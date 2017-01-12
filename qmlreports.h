@@ -47,7 +47,7 @@ signals:
     void contentHtml2Changed();
 
 public slots:
-    void test();
+    //void test();
 
 private:
     QString m_fileName;

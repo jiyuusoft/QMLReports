@@ -11,19 +11,51 @@ ApplicationWindow {
     title: qsTr("QMLReports")
 
     Report {
+        id: qmlReport
         fileName: "/Users/charlie/test.pdf"
+        logo: logo
+        contents:[content, content2, content, content2, content, content2, content, content2]
+        footer: footer
     }
 
 
     ReportContent {
         id: content
         htmlText: "Toto le rigolo"
-        size: "30"
+        size: 30
         family: "verdana"
         style: "italic"
     }
 
-/*
+    ReportContent {
+        id: content2
+        htmlText: "Toto le super<br><br><br><br>rigolohhsqjkd hzejfhjfzjf fzjkfhzjehfbhjz zefjhzekjfhzejkf ezfezjkfhzejk zfbzejfbjez bfjzbej
+zdfjzbfhjezf jkbfjzehfjlk efjezbfkjz fnekjzfnkzej fjkezfjkezf efjkezfjk"
+        size: 30
+        weight: "bold"
+        family: "verdana"
+        style: "italic"
+        align: "center"
+
+    }
+
+    ReportFooter {
+        id: footer
+        yOffsetMM: 5
+        align: "center"
+        htmlText: "
+<div style='color:blue ; font-family:verdana ; font-size:30px ;'>Ceci est un pied de page</div><br>
+<img src='qrc:/img/kdab.jpeg'>"
+    }
+
+    ReportLogo {
+        id: logo
+        htmlText: "<img src='qrc:/img/Qt.png'>"
+        center: true
+        align: "center"
+    }
+
+
     Reports {
         id: reports
         fileName: "/Users/charlie/test.pdf"
@@ -54,13 +86,13 @@ para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br
 
 
     Button {
+        id: btn
         x: 10; y: 10
         text: "print"
         onClicked: {
-            reports.test();
-            //reports.print()
+            qmlReport.print()
         }
     }
-    */
+
 
 }
