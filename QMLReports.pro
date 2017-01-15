@@ -7,7 +7,9 @@ SOURCES += main.cpp \
     qmlreportsfooter.cpp \
     qmlreportscontent.cpp \
     qmlreportsreport.cpp \
-    qmlreportslogo.cpp
+    qmlreportslogo.cpp \
+    qmlreportselement.cpp \
+    qmlreportsconfidential.cpp
 
 RESOURCES += qml.qrc
 
@@ -38,4 +40,6 @@ HEADERS += \
     qmlreportsfooter.h \
     qmlreportscontent.h \
     qmlreportsreport.h \
-    qmlreportslogo.h
+    qmlreportslogo.h \
+    qmlreportselement.h \
+    qmlreportsconfidential.h

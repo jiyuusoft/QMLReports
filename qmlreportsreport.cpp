@@ -14,10 +14,7 @@ void QMLReportsReport::init()
     QMarginsF margins(m_margins, m_margins, m_margins, m_margins);
     QPageLayout pageLayout(pageSize, QPageLayout::Portrait, margins, QPageLayout::Millimeter);
     m_writer->setPageLayout(pageLayout);
-
-
-    m_rectContent = new QRectF(0, 0, m_writer->width(), m_writer->height());
-    //m_heightContentAvailable = m_writer->height();
+    m_nbPage = 1;
 }
 
 QString QMLReportsReport::fileName() const
@@ -76,22 +73,11 @@ QMLReportsContent *QMLReportsReport::content(int index) const
     return m_contents.at(index);
 }
 
-
-void QMLReportsReport::print()
+void QMLReportsReport::addLogo()
 {
-    m_painter = new QPainter(m_writer);
-
     QTextDocument tdLogo;
-    QTextDocument tdFooter;
-    QTextDocument tdContent;
     QTextOption textOptionLogo;
-    QTextOption textOptionFooter;
-    QTextOption textOptionContent;
-    qreal lastY;
 
-
-
-    /* Add an logo to PDF File */
     if (m_logo->align() == "center"){
         textOptionLogo.setAlignment(Qt::AlignHCenter);
     }
@@ -114,33 +100,24 @@ void QMLReportsReport::print()
     tdLogo.setTextWidth(m_writer->width());
     tdLogo.setHtml(textHtmlLogo);
 
-    //m_xLogoOffset = xOffsetMM;
-    //m_yLogoOffset = yOffsetMM;
-    //m_logoTotalHeight = tdLogo.documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-
     qreal xLogo, yLogo;
     xLogo = mm2px(m_logo->xOffsetMM());
     yLogo = mm2px(m_logo->yOffsetMM());
-    lastY = yLogo + tdLogo.documentLayout()->documentSize().height();
+    m_lastY = yLogo + tdLogo.documentLayout()->documentSize().height();
 
+    m_painter->save();
     m_painter->translate(xLogo, yLogo);
     tdLogo.drawContents(m_painter);
-    m_painter->translate(-xLogo, -yLogo);
+    m_painter->restore();
 
-    //m_totalHeightDoc += td.documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-    //m_totalHeightDoc += m_logo->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
+    m_logoHeight = yLogo + tdLogo.documentLayout()->documentSize().height();
 
+}
 
-    //m_heightContentAvailable -=  m_logo->documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-    //m_heightContentAvailable -=  td.documentLayout()->documentSize().height() + mm2px(yOffsetMM);
-
-    //m_rectContent->setHeight(m_heightContentAvailable);
-
-
-
-    //=======================================//
-
-    /* Add a Footer to PDF File */
+void QMLReportsReport::addFooter()
+{
+    QTextDocument tdFooter;
+    QTextOption textOptionFooter;
 
     if (m_footer->align() == "center"){
         textOptionFooter.setAlignment(Qt::AlignHCenter);
@@ -170,17 +147,42 @@ void QMLReportsReport::print()
     xFooter = mm2px(m_footer->xOffsetMM());
     yFooter = m_writer->height() + mm2px(m_footer->yOffsetMM()) - tdFooter.documentLayout()->documentSize().height();
 
+    m_painter->save();
     m_painter->translate(xFooter, yFooter);
     tdFooter.drawContents(m_painter);
-    m_painter->translate(-xFooter, -yFooter);
+    m_painter->restore();
 
 
-    //=======================================//
+    m_footerHeight = -mm2px(m_footer->yOffsetMM()) + tdFooter.documentLayout()->documentSize().height();
+}
 
-    /* Add Contents to PDF File */
+void QMLReportsReport::addConfidential()
+{
+    QTextDocument tdConfidential;
+    QTextOption textOptionConfidential;
+    textOptionConfidential.setAlignment(Qt::AlignHCenter);
+    textOptionConfidential.setWrapMode(QTextOption::WordWrap);
+    tdConfidential.setDefaultTextOption(textOptionConfidential);
+    tdConfidential.setHtml("<div style='color:OrangeRed  ; font-family:georgia ; font-style:normal ; "
+                           "font-size:300px ; font-weight:normal ; text-decoration:none '><pre>C  O  N  F  I  D  E  N  T  I  A  L</pre></div>");
 
-    qDebug() << "lastY" << lastY;
-    qDebug() << "height logo" << tdLogo.documentLayout()->documentSize().height();
+
+
+    m_painter->save();
+    m_painter->translate(30, m_writer->height()-175);
+    m_painter->rotate(300);
+    m_painter->setOpacity(0.5);
+    tdConfidential.drawContents(m_painter);
+    m_painter->restore();
+}
+
+void QMLReportsReport::addContent()
+{
+    QTextDocument tdContent;
+    QTextOption textOptionContent;
+    m_cursor = new QTextCursor(&tdContent);
+
+    QString totalHtml;
 
     for (int i=0; i < m_contents.length(); i++){
         QMLReportsContent *content = m_contents.at(i);
@@ -206,21 +208,97 @@ void QMLReportsReport::print()
 
         QString styleEndContent = "</div>";
         QString textHtmlContent = styleBeginContent + content->htmlText() + styleEndContent;
-        tdContent.setHtml(textHtmlContent);
-
-        qreal xContent, yContent;
-        xContent = mm2px(content->xOffsetMM());
-        yContent = lastY + mm2px(content->yOffsetMM());
-        m_painter->translate(xContent, yContent);
-        tdContent.drawContents(m_painter);
-        m_painter->translate(-xContent, -yContent);
-        lastY += tdContent.documentLayout()->documentSize().height();
-
-        //qDebug() << textHtmlContent;
-        //qDebug() <<"x:" << xContent << " -  y:" << yContent << " -  height:" << tdContent.documentLayout()->documentSize().height();
-        //qDebug() << lastY;
-        //qDebug() << "    ";
+        m_totalHtml += textHtmlContent;
     }
+
+    m_cursor->insertHtml(m_totalHtml);
+
+    while (!m_contentCompleted){
+        checkPage();
+    }
+
+}
+
+void QMLReportsReport::checkPage()
+{
+    int textLen = m_cursor->selectionEnd();
+    int i = 0;
+
+    QTextDocument *td = m_cursor->document();
+    qreal xContent, yContent;
+    xContent = 0;
+    yContent = m_lastY;
+
+    m_heightAvailable = m_writer->height() - m_logoHeight - m_footerHeight;
+    m_heightNecessary = td->documentLayout()->documentSize().height();
+
+    qDebug() << "Page n°" << m_nbPage;
+    qDebug() << m_heightNecessary << "/" << m_heightAvailable;
+    qDebug() << m_writer->height();
+    qDebug() << "Logo Height :" << m_logoHeight << " -  " << "Footer Height :" << m_footerHeight;
+    qDebug() << "===========";
+
+
+    if (m_heightNecessary > m_heightAvailable){
+        m_cursor->movePosition(QTextCursor::Start);
+        qDebug() << m_cursor->selectionEnd();
+
+        while (i < textLen){
+            m_cursor->movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
+            QString newHtml = m_cursor->selection().toHtml();
+
+            QTextDocument doc;
+            QTextCursor cursor(&doc);
+            cursor.insertHtml(newHtml);
+            qreal height = doc.documentLayout()->documentSize().height();
+            if (height >= m_heightAvailable) break;
+            i = cursor.selectionEnd();
+        }
+
+        m_cursor->setPosition(i-1);
+        m_cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+        QString htmlToo = m_cursor->selection().toHtml();
+
+        m_cursor->setPosition(i-1);
+        m_cursor->movePosition(QTextCursor::Start, QTextCursor::KeepAnchor);
+        QString htmlToPrint = m_cursor->selection().toHtml();
+
+        m_cursor->select(QTextCursor::Document);
+        m_cursor->removeSelectedText();
+        m_cursor->insertHtml(htmlToPrint);
+
+        m_painter->save();
+        m_painter->translate(xContent, yContent);
+        td->drawContents(m_painter);
+        m_painter->restore();
+
+        m_writer->newPage();
+        m_nbPage += 1;
+        m_lastY = 0;
+        addLogo();
+        addFooter();
+        addConfidential();
+
+        m_cursor->select(QTextCursor::Document);
+        m_cursor->removeSelectedText();
+        m_cursor->insertHtml(htmlToo);
+    }
+    else {
+        m_painter->translate(xContent, yContent);
+        td->drawContents(m_painter);
+        m_contentCompleted = true;
+    }
+
+}
+
+void QMLReportsReport::print()
+{
+    m_painter = new QPainter(m_writer);
+
+    addLogo();
+    addFooter();
+    addConfidential();
+    addContent();
 
 
     if (m_painter->end()){

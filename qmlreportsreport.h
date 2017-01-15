@@ -9,10 +9,14 @@
 #include <QDesktopServices>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
+#include <QTextDocumentFragment>
+//#include <QTextCursor>
 
 #include "qmlreportslogo.h"
 #include "qmlreportsfooter.h"
 #include "qmlreportscontent.h"
+#include "qmlreportselement.h"
+#include "qmlreportsconfidential.h"
 
 // ![0]
 class QMLReportsReport : public QObject
@@ -57,22 +61,30 @@ public slots:
 
 private slots:
     void init();
+    void addLogo();
+    void addFooter();
+    void addConfidential();
+    void addContent();
+    void checkPage();
 
 private:
     QPainter *m_painter;
     QPdfWriter *m_writer;
+    QTextCursor *m_cursor;
     QString m_fileName;
     int m_resolution = 300;
     qreal m_margins = 10;
     QMLReportsLogo *m_logo;
     QMLReportsFooter *m_footer;
     QList<QMLReportsContent *> m_contents;
-    QRectF *m_rectContent;
+    qreal m_lastY;
+    qreal m_heightAvailable;
+    qreal m_heightNecessary;
+    QString m_totalHtml;
+    qreal m_logoHeight, m_footerHeight;
+    bool m_contentCompleted;
+    int m_nbPage;
 
-
-    /* LOGO */
-    qreal m_logoTotalHeight;
 };
-// ![3]
 
 #endif // QMLREPORTSREPORT_H
