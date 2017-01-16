@@ -13,58 +13,72 @@ ApplicationWindow {
 
     property string docLocation: StandardPaths.writableLocation(StandardPaths.DocumentsLocation).toString().split("file://").pop()
 
+    property string table:
+"<table border=1 width=100%>
+    <tr>
+        <td colspan='2' align='center'>An example of table</td>
+    </tr>
+    <tr>
+        <td rowspan='2' valign='middle' align='center'>rowspan and colspan work</td>
+        <td align='right'>you can easaly create your tab</td>
+    </tr>
+    <tr>
+        <td align='center'>Last Ce</td>
+    </tr>
+</table><br><br><br>";
 
-    Component.onCompleted: {
-        console.log(dataLocation, docLocation)
-    }
+    property string titleReport: "<center>THIS IS AN EXAMPLE OF QMLREPORTS</center><br><br>";  //revoir l'utilisation de la balise center en tant que property
+    property string textReport: "
+This is the main text<br><br><br>";
 
+    property string textReport2: "
+This is a second text";
 
-
-    property string contentHtml1:
-        "K<sub>max</sub>=K<sub>2</sub> &middot; <br><br><br><br><b>3fd</b>fdsufhufuishfcuifhuicnfgdfjgfsdfehfiuevfvvfgfg   dfhzeiufezui huifheiufh huihfeiuf huiehguiehr
-        kdfdjhff hgiheh hfguhgjhe hgrehgh<br><br><br>rgjhiher ghirhgierh ghirhgi gh ghrgh hrhgk h rghrekgherk
-        <br><br><br><br><br><br><br>
-        <table border=1>
-             <tr><td>Toto10</td><td>Toto11</td></tr>
-             <tr><td valign='middle'>Toto20</td><td align='right'>super mega <br>Toto21</td></tr>
-             <tr><td colspan='2' align='center'>Toto3</td></tr>
-        </table><br>
-         <img src=':/img/Qt.png'><br><br><br><br><br><br><br><br><br><br><br><br><br><br>";
-
-    property string contentHtml2:
-        "para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2
-<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2para2
-<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2<br>Para2para2
-<br>Para21<br>Para22<br>Para23<br>Para24<br>Para25<br>Para26<br>Para27<br>Para28
-</div>";
 
     Report {
         id: qmlReport
-        fileName: docLocation+"test.pdf"
+        fileName: docLocation+"/test.pdf"
         logo: logo
-        contents:[content, content2, content, content2]
+        contents:[titleContent, tableContent, textContent, textContent2]
         footer: footer
-    }
-
-
-    ReportContent {
-        id: content
-        htmlText: contentHtml1
-        size: 30
-        family: "verdana"
-        style: "italic"
+        // Add confidential property
     }
 
     ReportContent {
-        id: content2
-        htmlText: contentHtml2
-        size: 30
+        id: titleContent
+        htmlText: titleReport
+        size: 50
         weight: "bold"
+        family: "helvetica"
+        align: "center"
+        yOffsetMM: 15   // probleme de gestion de cette property
+    }
+
+    ReportContent {
+        id: tableContent
+        htmlText: table
+        size: 30
         family: "verdana"
         style: "italic"
-        //align: "center"
-
     }
+
+    ReportContent {
+        id: textContent
+        htmlText: textReport
+        size: 30
+        family: "verdana"
+        color: "blue"
+    }
+
+    ReportContent {
+        id: textContent2
+        htmlText: textReport2
+        size: 20
+        family: "verdana"
+        color: "green"
+    }
+
+
 
     ReportFooter {
         id: footer
@@ -83,8 +97,6 @@ ApplicationWindow {
     }
 
 
-
-
     Button {
         id: btn
         x: 10; y: 10
@@ -93,6 +105,4 @@ ApplicationWindow {
             qmlReport.print()
         }
     }
-
-
 }

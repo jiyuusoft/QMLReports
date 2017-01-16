@@ -2,7 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QStandardPaths>
 #include <QQmlContext>
-#include "qmlreportsreport.h"
+#include <QDebug>
+#include "qmlreports.h"
 
 
 int main(int argc, char *argv[])
@@ -19,12 +20,8 @@ int main(int argc, char *argv[])
     QString dataLocation = standardPath->standardLocations(QStandardPaths::DataLocation)[0];
 #endif
 
-
-
-    qmlRegisterType<QMLReportsReport>("QMLReports", 1, 0, "Report");
-    qmlRegisterType<QMLReportsContent>("QMLReports", 1, 0, "ReportContent");
-    qmlRegisterType<QMLReportsFooter>("QMLReports", 1, 0, "ReportFooter");
-    qmlRegisterType<QMLReportsLogo>("QMLReports", 1, 0, "ReportLogo");
+    QMLReports report;
+    report.import();
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("dataLocation", dataLocation);
