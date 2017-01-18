@@ -27,9 +27,24 @@ ApplicationWindow {
     </tr>
 </table><br><br><br>";
 
-    property string titleReport: "<center>THIS IS AN EXAMPLE OF QMLREPORTS</center><br><br>";  //revoir l'utilisation de la balise center en tant que property
+    property string titleReport: "THIS IS AN EXAMPLE OF<br>QMLREPORTS<br><br>";  //revoir l'utilisation de la balise center en tant que property
     property string textReport: "
-This is the main text<br><br><br>";
+This is the main text of the example of QMLReports. Here, we write a text with blue color, verdana family, 30 for size, justif aling. With QMLReports, create PDF files is very
+simple and very fast. You can add header, footer and many contents. For each element you can use this properties : xOffsetMM, yOffsetMM, align, color, size, familiy, decoration,
+weight, style and htmlText.<br><br>
+<ul>
+    <li>xOffsetMM :</li>
+    <li>yOffsetMM :</li>
+    <li>align :</li>
+    <li>color :</li>
+    <li>size :</li>
+    <li>family :</li>
+    <li>decoration :</li>
+    <li>weight :</li>
+    <li>style :</li>
+    <li>htmlText :</li>
+</ul>
+<br><br><br><br><br><br><br><br>";
 
     property string textReport2: "
 This is a second text";
@@ -38,16 +53,33 @@ This is a second text";
     Report {
         id: qmlReport
         fileName: docLocation+"/test.pdf"
-        logo: logo
+        header: logo
         contents:[titleContent, tableContent, textContent, textContent2]
         footer: footer
+        resolution: 900
         // Add confidential property
+    }
+
+    ReportHeader {
+        id: logo
+        htmlText: "<img src='qrc:/img/Qt.png'>"
+        align: "left"
+    }
+
+    ReportFooter {
+        id: footer
+        yOffsetMM: 5
+        //center: true
+        align: "right"
+        htmlText: "
+<div style='color:blue ; font-family:verdana ; font-size:30px ;'>Ceci est un pied de page</div><br>
+<img src='qrc:/img/kdab.jpeg'>"
     }
 
     ReportContent {
         id: titleContent
         htmlText: titleReport
-        size: 50
+        size: 10
         weight: "bold"
         family: "helvetica"
         align: "center"
@@ -65,37 +97,19 @@ This is a second text";
     ReportContent {
         id: textContent
         htmlText: textReport
-        size: 30
+        size: 10
         family: "verdana"
         color: "blue"
+        align: "justify"
     }
 
     ReportContent {
         id: textContent2
         htmlText: textReport2
-        size: 20
+        size: 10
         family: "verdana"
         color: "green"
     }
-
-
-
-    ReportFooter {
-        id: footer
-        yOffsetMM: 5
-        align: "center"
-        htmlText: "
-<div style='color:blue ; font-family:verdana ; font-size:30px ;'>Ceci est un pied de page</div><br>
-<img src='qrc:/img/kdab.jpeg'>"
-    }
-
-    ReportLogo {
-        id: logo
-        htmlText: "<img src='qrc:/img/Qt.png'>"
-        center: true
-        align: "center"
-    }
-
 
     Button {
         id: btn

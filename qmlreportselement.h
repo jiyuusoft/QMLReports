@@ -2,6 +2,7 @@
 #define QMLREPORTSELEMENT_H
 
 #include <QObject>
+#include <QDebug>
 
 class QMLReportsElement : public QObject
 {
@@ -15,7 +16,6 @@ class QMLReportsElement : public QObject
     Q_PROPERTY(QString htmlText READ htmlText WRITE setHtmlText NOTIFY htmlTextChanged)
     Q_PROPERTY(qreal xOffsetMM READ xOffsetMM WRITE setXOffsetMM)
     Q_PROPERTY(qreal yOffsetMM READ yOffsetMM WRITE setYOffsetMM)
-    Q_PROPERTY(bool center READ center WRITE setCenter)
     Q_PROPERTY(QString align READ align WRITE setAlign)
 
 public:
@@ -48,12 +48,11 @@ public:
     qreal yOffsetMM() const;
     void setYOffsetMM(const qreal &a);
 
-    bool center() const;
-    void setCenter(const bool &a);
-
     QString align() const;
     void setAlign(const QString &a);
 
+public slots:
+    void reinit();
 
 signals:
     void colorChanged();
@@ -74,8 +73,7 @@ private:
     QString m_htmlText;
     qreal m_xOffsetMM;
     qreal m_yOffsetMM;
-    bool m_center;
-    QString m_align;
+    QString m_align = "left";
 
 
 };

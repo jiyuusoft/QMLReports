@@ -5,7 +5,3 @@ QMLReportsConfidential::QMLReportsConfidential()
 
 }
 
-void QMLReportsConfidential::inti()
-{
-
-}

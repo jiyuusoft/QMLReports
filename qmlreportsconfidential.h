@@ -1,8 +1,6 @@
 #ifndef QMLREPORTSCONFIDENTIAL_H
 #define QMLREPORTSCONFIDENTIAL_H
 
-#include <QObject>
-
 #include "qmlreportselement.h"
 
 
@@ -13,7 +11,6 @@ public:
     explicit QMLReportsConfidential();
 
 public slots:
-    void inti();
 
 };
 

@@ -4,6 +4,23 @@ QMLReportsElement::QMLReportsElement(QObject *parent) : QObject(parent)
 {
 
 }
+
+void QMLReportsElement::reinit()
+{
+    /*if (m_center == "center"){
+        m_htmlText = "<center>"+m_htmlText+"</center>";
+    }*/
+
+    //
+    /*
+     * voir comment centrer et justifier
+     * améliorier la balise aligne
+     * ajouter un composant QMLTable
+     * ajouter propriété image dans logo et footer
+     *
+     */
+}
+
 QString QMLReportsElement::color() const
 {
     return m_color;
@@ -96,7 +113,6 @@ QString QMLReportsElement::htmlText() const
 
 void QMLReportsElement::setHtmlText(const QString &a)
 {
-
     if (a != m_htmlText) {
         m_htmlText = a;
         emit htmlTextChanged();
@@ -109,10 +125,10 @@ void QMLReportsElement::setXOffsetMM(const qreal &a) {m_xOffsetMM = a;}
 qreal QMLReportsElement::yOffsetMM() const {return m_yOffsetMM;}
 void QMLReportsElement::setYOffsetMM(const qreal &a) {m_yOffsetMM = a;}
 
-bool QMLReportsElement::center() const {return m_center;}
-void QMLReportsElement::setCenter(const bool &a) {m_center = a;}
-
 QString QMLReportsElement::align() const {return m_align;}
-void QMLReportsElement::setAlign(const QString &a) {m_align = a;}
+void QMLReportsElement::setAlign(const QString &a)
+{
+   m_align = a;
+}
 
 

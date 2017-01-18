@@ -11,7 +11,7 @@ void QMLReports::import ()
     qmlRegisterType<QMLReports>("QMLReports", 1, 0, "Report");
     qmlRegisterType<QMLReportsContent>("QMLReports", 1, 0, "ReportContent");
     qmlRegisterType<QMLReportsFooter>("QMLReports", 1, 0, "ReportFooter");
-    qmlRegisterType<QMLReportsLogo>("QMLReports", 1, 0, "ReportLogo");
+    qmlRegisterType<QMLReportsHeader>("QMLReports", 1, 0, "ReportHeader");
 }
 
 void QMLReports::init()
@@ -46,14 +46,14 @@ void QMLReports::setMargins(const qreal &margins) {m_margins = margins;}
 
 
 
-QMLReportsLogo *QMLReports::logo() const
+QMLReportsHeader *QMLReports::header() const
 {
-    return m_logo;
+    return m_header;
 }
 
-void QMLReports::setLogo(QMLReportsLogo *logo)
+void QMLReports::setHeader(QMLReportsHeader *header)
 {
-    m_logo = logo;
+    m_header = header;
 }
 
 QMLReportsFooter *QMLReports::footer() const
@@ -81,36 +81,39 @@ QMLReportsContent *QMLReports::content(int index) const
     return m_contents.at(index);
 }
 
-void QMLReports::addLogo()
+QString QMLReports::setFormat(QMLReportsElement *element)
+{
+    QString styleBeginContent = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
+                                   "font-size:%4px ; font-weight:%5 ; text-decoration:%6 ; ' align=%7>"
+                                   "").arg(element->color(),
+                                           element->family(),
+                                           element->style(),
+                                           QString::number(m_resolution / element->size()),  // il faut rendre inversement proportionel cette valeur
+                                           element->weight(),
+                                           element->decoration(),
+                                           element->align());
+
+    QString styleEndContent = "</div>";
+    QString textHtmlContent = styleBeginContent + element->htmlText() + styleEndContent;
+
+    return textHtmlContent;
+
+}
+
+void QMLReports::addHeader()
 {
     QTextDocument tdLogo;
     QTextOption textOptionLogo;
 
-    if (m_logo->align() == "center"){
-        textOptionLogo.setAlignment(Qt::AlignHCenter);
-    }
-    else{
-        textOptionLogo.setAlignment(Qt::AlignJustify);
-    }
+    m_header->reinit();
     textOptionLogo.setWrapMode(QTextOption::WordWrap);
     tdLogo.setDefaultTextOption(textOptionLogo);
-
-    QString styleBeginLogo = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
-                                "font-size:%4px ; font-weight:%5 ; text-decoration:%6'>"
-                                "").arg(m_logo->color(),
-                                        m_logo->family(),
-                                        m_logo->style(),
-                                        QString::number(m_logo->size()),
-                                        m_logo->weight(),
-                                        m_logo->decoration());
-    QString styleEndLogo = "</div>";
-    QString textHtmlLogo = styleBeginLogo + m_logo->htmlText() + styleEndLogo;
     tdLogo.setTextWidth(m_writer->width());
-    tdLogo.setHtml(textHtmlLogo);
+    tdLogo.setHtml(setFormat(m_header));
 
     qreal xLogo, yLogo;
-    xLogo = mm2px(m_logo->xOffsetMM());
-    yLogo = mm2px(m_logo->yOffsetMM());
+    xLogo = mm2px(m_header->xOffsetMM());
+    yLogo = mm2px(m_header->yOffsetMM());
     m_lastY = yLogo + tdLogo.documentLayout()->documentSize().height();
 
     m_painter->save();
@@ -127,29 +130,11 @@ void QMLReports::addFooter()
     QTextDocument tdFooter;
     QTextOption textOptionFooter;
 
-    if (m_footer->align() == "center"){
-        textOptionFooter.setAlignment(Qt::AlignHCenter);
-    }
-    else{
-        textOptionFooter.setAlignment(Qt::AlignJustify);
-    }
+    m_footer->reinit();
     textOptionFooter.setWrapMode(QTextOption::WordWrap);
     tdFooter.setDefaultTextOption(textOptionFooter);
-
-    QString styleBeginFooter = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
-                                  "font-size:%4px ; font-weight:%5 ; text-decoration:%6'>"
-                                  "").arg(m_footer->color(),
-                                          m_footer->family(),
-                                          m_footer->style(),
-                                          QString::number(m_footer->size()),
-                                          m_footer->weight(),
-                                          m_footer->decoration());
-
-
-    QString styleEndFooter = "</div>";
-    QString textHtmlFooter = styleBeginFooter + m_footer->htmlText() + styleEndFooter;
     tdFooter.setTextWidth(m_writer->width());
-    tdFooter.setHtml(textHtmlFooter);
+    tdFooter.setHtml(setFormat(m_footer));
 
     qreal xFooter, yFooter;
     xFooter = mm2px(m_footer->xOffsetMM());
@@ -159,7 +144,6 @@ void QMLReports::addFooter()
     m_painter->translate(xFooter, yFooter);
     tdFooter.drawContents(m_painter);
     m_painter->restore();
-
 
     m_footerHeight = -mm2px(m_footer->yOffsetMM()) + tdFooter.documentLayout()->documentSize().height();
 }
@@ -173,8 +157,6 @@ void QMLReports::addConfidential()
     tdConfidential.setDefaultTextOption(textOptionConfidential);
     tdConfidential.setHtml("<div style='color:OrangeRed  ; font-family:georgia ; font-style:normal ; "
                            "font-size:300px ; font-weight:normal ; text-decoration:none '><pre>C  O  N  F  I  D  E  N  T  I  A  L</pre></div>");
-
-
 
     m_painter->save();
     m_painter->translate(30, m_writer->height()-175);
@@ -190,33 +172,14 @@ void QMLReports::addContent()
     QTextOption textOptionContent;
     m_cursor = new QTextCursor(&tdContent);
 
-    QString totalHtml;
-
     for (int i=0; i < m_contents.length(); i++){
         QMLReportsContent *content = m_contents.at(i);
-        if (content->align() == "center"){
-            textOptionContent.setAlignment(Qt::AlignHCenter);
-        }
-        else{
-            textOptionContent.setAlignment(Qt::AlignJustify);
-        }
+        content->reinit();
 
         textOptionContent.setWrapMode(QTextOption::WordWrap);
         tdContent.setDefaultTextOption(textOptionContent);
         tdContent.setTextWidth(m_writer->width());
-
-        QString styleBeginContent = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
-                                       "font-size:%4px ; font-weight:%5 ; text-decoration:%6'>"
-                                       "").arg(content->color(),
-                                               content->family(),
-                                               content->style(),
-                                               QString::number(content->size()),
-                                               content->weight(),
-                                               content->decoration());
-
-        QString styleEndContent = "</div>";
-        QString textHtmlContent = styleBeginContent + content->htmlText() + styleEndContent;
-        m_totalHtml += textHtmlContent;
+        m_totalHtml += setFormat(content);
     }
 
     m_cursor->insertHtml(m_totalHtml);
@@ -283,7 +246,7 @@ void QMLReports::checkPage()
         m_writer->newPage();
         m_nbPage += 1;
         m_lastY = 0;
-        addLogo();
+        addHeader();
         addFooter();
         addConfidential();
 
@@ -303,7 +266,7 @@ void QMLReports::print()
 {
     m_painter = new QPainter(m_writer);
 
-    addLogo();
+    addHeader();
     addFooter();
     addConfidential();
     addContent();

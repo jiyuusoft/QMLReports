@@ -13,7 +13,7 @@
 #include <QTextDocumentFragment>
 #include <QTime>
 
-#include "qmlreportslogo.h"
+#include "qmlreportsheader.h"
 #include "qmlreportsfooter.h"
 #include "qmlreportscontent.h"
 #include "qmlreportselement.h"
@@ -26,7 +26,7 @@ class QMLReports : public QObject
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
     Q_PROPERTY(int resolution READ resolution WRITE setResolution)
     Q_PROPERTY(qreal margins READ margins WRITE setMargins)
-    Q_PROPERTY(QMLReportsLogo *logo READ logo WRITE setLogo)
+    Q_PROPERTY(QMLReportsHeader *header READ header WRITE setHeader)
     Q_PROPERTY(QMLReportsFooter *footer READ footer WRITE setFooter)
     Q_PROPERTY(QQmlListProperty<QMLReportsContent> contents READ contents)
 
@@ -42,8 +42,8 @@ public:
     qreal margins() const;
     void setMargins(const qreal &margins);
 
-    QMLReportsLogo *logo() const;
-    void setLogo(QMLReportsLogo *logo);
+    QMLReportsHeader *header() const;
+    void setHeader(QMLReportsHeader *header);
 
     QMLReportsFooter *footer() const;
     void setFooter(QMLReportsFooter *footer);
@@ -60,10 +60,11 @@ public slots:
     qreal px2mm(int px){return px / 0.039370147 / m_writer->resolution();}
     void print();
     void import();
+    QString setFormat(QMLReportsElement *element);
 
 private slots:
     void init();
-    void addLogo();
+    void addHeader();
     void addFooter();
     void addConfidential();
     void addContent();
@@ -76,7 +77,7 @@ private:
     QString m_fileName;
     int m_resolution = 300;
     qreal m_margins = 10;
-    QMLReportsLogo *m_logo;
+    QMLReportsHeader *m_header;
     QMLReportsFooter *m_footer;
     QList<QMLReportsContent *> m_contents;
     qreal m_lastY;
