@@ -9,6 +9,7 @@
 #include <QPdfWriter>
 #include <QDesktopServices>
 #include <QTextDocument>
+#include <QTextBlockFormat>
 #include <QAbstractTextDocumentLayout>
 #include <QTextDocumentFragment>
 #include <QTime>
@@ -63,23 +64,26 @@ public slots:
     QString setFormat(QMLReportsElement *element);
 
 private slots:
-    void init();
     void addHeader();
     void addFooter();
     void addConfidential();
     void addContent();
-    void checkPage();
+    void printContent(QTextDocument *doc, int beginPosition=0);
+    void newPage();
+    int checkDoc(int posi);
 
 private:
-    QPainter *m_painter;
-    QPdfWriter *m_writer;
-    QTextCursor *m_cursor;
+    QPainter *m_painter = 0;
+    QPdfWriter *m_writer = 0;
+    QTextCursor *m_cursor = 0;
+    QRectF m_rectContent;
     QString m_fileName;
+
     int m_resolution = 300;
     qreal m_margins = 10;
-    QMLReportsHeader *m_header;
-    QMLReportsFooter *m_footer;
-    QList<QMLReportsContent *> m_contents;
+    QMLReportsHeader *m_header = 0;
+    QMLReportsFooter *m_footer = 0;
+    QList<QMLReportsContent *> m_contents; // how initialize ???
     qreal m_lastY;
     qreal m_heightAvailable;
     qreal m_heightNecessary;
@@ -87,6 +91,9 @@ private:
     qreal m_logoHeight, m_footerHeight;
     bool m_contentCompleted;
     int m_nbPage;
+
+    qreal m_beginContentY;
+    qreal m_endContentY;
 };
 
 #endif // QMLREPORTS_H

@@ -1,10 +1,7 @@
 #include "qmlreports.h"
 
 
-QMLReports::QMLReports(QObject *parent)
-{
-    connect(this, SIGNAL(fileNameChanged()), this, SLOT(init()));
-}
+QMLReports::QMLReports(QObject *parent){ }
 
 void QMLReports::import ()
 {
@@ -12,17 +9,6 @@ void QMLReports::import ()
     qmlRegisterType<QMLReportsContent>("QMLReports", 1, 0, "ReportContent");
     qmlRegisterType<QMLReportsFooter>("QMLReports", 1, 0, "ReportFooter");
     qmlRegisterType<QMLReportsHeader>("QMLReports", 1, 0, "ReportHeader");
-}
-
-void QMLReports::init()
-{
-    m_writer = new QPdfWriter(m_fileName);
-    m_writer->setResolution(m_resolution);
-    QPageSize pageSize(QPageSize::A4);
-    QMarginsF margins(m_margins, m_margins, m_margins, m_margins);
-    QPageLayout pageLayout(pageSize, QPageLayout::Portrait, margins, QPageLayout::Millimeter);
-    m_writer->setPageLayout(pageLayout);
-    m_nbPage = 1;
 }
 
 QString QMLReports::fileName() const
@@ -83,12 +69,14 @@ QMLReportsContent *QMLReports::content(int index) const
 
 QString QMLReports::setFormat(QMLReportsElement *element)
 {
+    qreal k=1;
+    qreal kReso =1;
     QString styleBeginContent = tr("<div style='color:%1 ; font-family:%2 ; font-style:%3 ; "
                                    "font-size:%4px ; font-weight:%5 ; text-decoration:%6 ; ' align=%7>"
                                    "").arg(element->color(),
                                            element->family(),
                                            element->style(),
-                                           QString::number(m_resolution / element->size()),  // il faut rendre inversement proportionel cette valeur
+                                           QString::number(element->size() * k * kReso),  // il faut rendre inversement proportionel cette valeur
                                            element->weight(),
                                            element->decoration(),
                                            element->align());
@@ -97,6 +85,19 @@ QString QMLReports::setFormat(QMLReportsElement *element)
     QString textHtmlContent = styleBeginContent + element->htmlText() + styleEndContent;
 
     return textHtmlContent;
+
+}
+
+void QMLReports::newPage()
+{
+    m_writer->newPage();
+    m_nbPage += 1;
+    m_lastY = 0;
+    addHeader();
+    addFooter();
+    addConfidential();
+    m_painter->setPen(Qt::green);
+    m_painter->drawRect(m_rectContent);
 
 }
 
@@ -120,9 +121,14 @@ void QMLReports::addHeader()
     m_painter->translate(xLogo, yLogo);
     tdLogo.drawContents(m_painter);
     m_painter->restore();
+    QRectF rect(xLogo, yLogo, m_writer->width(), tdLogo.documentLayout()->documentSize().height());
+    m_painter->setPen(Qt::red);
+    m_painter->drawRect(rect);
 
     m_logoHeight = yLogo + tdLogo.documentLayout()->documentSize().height();
-
+    m_beginContentY = m_logoHeight;
+    m_heightAvailable -= m_logoHeight;
+    m_rectContent.setTop(m_beginContentY);
 }
 
 void QMLReports::addFooter()
@@ -144,8 +150,15 @@ void QMLReports::addFooter()
     m_painter->translate(xFooter, yFooter);
     tdFooter.drawContents(m_painter);
     m_painter->restore();
+    QRectF rect(xFooter, yFooter, m_writer->width(), tdFooter.documentLayout()->documentSize().height());
+    m_painter->setPen(Qt::red);
+    m_painter->drawRect(rect);
 
     m_footerHeight = -mm2px(m_footer->yOffsetMM()) + tdFooter.documentLayout()->documentSize().height();
+    m_endContentY = m_writer->height() - m_footerHeight;
+    m_heightAvailable -= m_footerHeight;
+    m_rectContent.setBottom(m_endContentY-mm2px(3));
+
 }
 
 void QMLReports::addConfidential()
@@ -168,109 +181,115 @@ void QMLReports::addConfidential()
 
 void QMLReports::addContent()
 {
-    QTextDocument tdContent;
-    QTextOption textOptionContent;
-    m_cursor = new QTextCursor(&tdContent);
+    m_painter->setPen(Qt::green);
+    m_painter->drawRect(m_rectContent);
 
     for (int i=0; i < m_contents.length(); i++){
         QMLReportsContent *content = m_contents.at(i);
-        content->reinit();
-
-        textOptionContent.setWrapMode(QTextOption::WordWrap);
-        tdContent.setDefaultTextOption(textOptionContent);
-        tdContent.setTextWidth(m_writer->width());
         m_totalHtml += setFormat(content);
     }
 
-    m_cursor->insertHtml(m_totalHtml);
+    QTextDocument tdContent;
+    QTextOption textOptionContent;
+    textOptionContent.setWrapMode(QTextOption::WordWrap);
+    tdContent.setDefaultTextOption(textOptionContent);
+    tdContent.setTextWidth(m_writer->width());
 
-    while (!m_contentCompleted){
-        checkPage();
-    }
+    printContent(&tdContent);
+
 
 }
 
-void QMLReports::checkPage()
+void QMLReports::printContent(QTextDocument *doc, int beginPosition)
 {
-    int textLen = m_cursor->selectionEnd();
-    int i = 0;
+    doc->clear();
+    m_cursor = new QTextCursor(doc);
+    m_cursor->insertHtml(m_totalHtml);
+    int textLen = m_cursor->selectionEnd()-beginPosition;
+    int docHeight = doc->documentLayout()->documentSize().height();
 
-    QTextDocument *td = m_cursor->document();
-    qreal xContent, yContent;
-    xContent = 0;
-    yContent = m_lastY;
-
-    m_heightAvailable = m_writer->height() - m_logoHeight - m_footerHeight;
-    m_heightNecessary = td->documentLayout()->documentSize().height();
-
+    qDebug() << "   ";
+    qDebug() << "============";
     qDebug() << "Page n°" << m_nbPage;
-    qDebug() << m_heightNecessary << "/" << m_heightAvailable;
-    qDebug() << m_writer->height();
-    qDebug() << "Logo Height :" << m_logoHeight << " -  " << "Footer Height :" << m_footerHeight;
-    qDebug() << "===========";
+    qDebug() << "Initial TextDoc height" << docHeight;
+    qDebug() << "Total Available" << m_nbPage * m_rectContent.height();
+    qDebug() << "TextLen to print" << textLen;
 
+    //How do if the first line is empty (ie: <br>,...) ??.
 
-    if (m_heightNecessary > m_heightAvailable){
-        m_cursor->movePosition(QTextCursor::Start);
-        qDebug() << m_cursor->selectionEnd();
-
-        while (i < textLen){
-            m_cursor->movePosition(QTextCursor::NextWord, QTextCursor::KeepAnchor);
-            QString newHtml = m_cursor->selection().toHtml();
-
-            QTextDocument doc;
-            QTextCursor cursor(&doc);
-            cursor.insertHtml(newHtml);
-            qreal height = doc.documentLayout()->documentSize().height();
-            if (height >= m_heightAvailable) break;
-            i = cursor.selectionEnd();
-        }
-
-        m_cursor->setPosition(i-1);
+    if (beginPosition != 0)
+    {
+        m_cursor->setPosition(beginPosition);
         m_cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
-        QString htmlToo = m_cursor->selection().toHtml();
+        m_totalHtml = m_cursor->selection().toHtml();
+    }
 
-        m_cursor->setPosition(i-1);
-        m_cursor->movePosition(QTextCursor::Start, QTextCursor::KeepAnchor);
-        QString htmlToPrint = m_cursor->selection().toHtml();
+    int actPosi = beginPosition;
+    if (docHeight > m_nbPage * m_rectContent.height()){
+        doc->clear();
+        while(doc->documentLayout()->documentSize().height() < m_rectContent.height())
+        {
+            QTextCursor *cursor = new QTextCursor(doc);
+            cursor->insertHtml(m_totalHtml);
+            cursor->setPosition(actPosi);
+            cursor->movePosition(QTextCursor::Down);
 
-        m_cursor->select(QTextCursor::Document);
-        m_cursor->removeSelectedText();
-        m_cursor->insertHtml(htmlToPrint);
-
+            cursor->movePosition(QTextCursor::Down);
+            actPosi = cursor->position();
+            cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+            cursor->removeSelectedText();
+        }
         m_painter->save();
-        m_painter->translate(xContent, yContent);
-        td->drawContents(m_painter);
+        m_painter->translate(m_rectContent.topLeft());
+        doc->drawContents(m_painter);
         m_painter->restore();
+        qDebug() << "The next begin position will be" << actPosi;
 
-        m_writer->newPage();
-        m_nbPage += 1;
-        m_lastY = 0;
-        addHeader();
-        addFooter();
-        addConfidential();
-
-        m_cursor->select(QTextCursor::Document);
-        m_cursor->removeSelectedText();
-        m_cursor->insertHtml(htmlToo);
+        if (actPosi < textLen){
+            newPage();
+            printContent(doc, actPosi);
+        }
     }
     else {
-        m_painter->translate(xContent, yContent);
-        td->drawContents(m_painter);
-        m_contentCompleted = true;
+        doc->clear();
+        QTextCursor *cursor = new QTextCursor(doc);
+        cursor->insertHtml(m_totalHtml);
+        m_painter->save();
+        m_painter->translate(m_rectContent.topLeft());
+        doc->drawContents(m_painter);
+        m_painter->restore();
     }
 
+
+
+
 }
+
+int QMLReports::checkDoc(int posi)
+{
+    return posi;
+}
+
+
 
 void QMLReports::print()
 {
+    m_writer = new QPdfWriter(m_fileName);
+    m_writer->setResolution(m_resolution);
+    QPageSize pageSize(QPageSize::A4);
+    QMarginsF margins(m_margins, m_margins, m_margins, m_margins);
+    QPageLayout pageLayout(pageSize, QPageLayout::Portrait, margins, QPageLayout::Millimeter);
+    m_writer->setPageLayout(pageLayout);
+    m_nbPage = 1;
+    m_heightAvailable = m_writer->height();
+    m_rectContent.setCoords(0, 0, m_writer->width(), 0);
     m_painter = new QPainter(m_writer);
+
 
     addHeader();
     addFooter();
     addConfidential();
     addContent();
-
 
     if (m_painter->end()){
         QTime chrono;
@@ -278,5 +297,7 @@ void QMLReports::print()
         while( chrono.elapsed() < 500 ){   }
 
         QDesktopServices::openUrl(QUrl("file:"+m_fileName));
+        m_contentCompleted = false;
+        m_totalHtml = "";
     }
 }
