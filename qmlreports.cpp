@@ -157,7 +157,7 @@ void QMLReports::addFooter()
     m_footerHeight = -mm2px(m_footer->yOffsetMM()) + tdFooter.documentLayout()->documentSize().height();
     m_endContentY = m_writer->height() - m_footerHeight;
     m_heightAvailable -= m_footerHeight;
-    m_rectContent.setBottom(m_endContentY-mm2px(4));
+    m_rectContent.setBottom(m_endContentY-mm2px(2));
 
 }
 
@@ -191,9 +191,10 @@ void QMLReports::addContent()
 
     QTextDocument tdContent;
     QTextOption textOptionContent;
+    textOptionContent.setAlignment(Qt::AlignJustify);
     textOptionContent.setWrapMode(QTextOption::WordWrap);
     tdContent.setDefaultTextOption(textOptionContent);
-    tdContent.setTextWidth(m_writer->width());
+    tdContent.setTextWidth(m_writer->width()-mm2px(3));
 
     setContent(&tdContent);
 }
@@ -218,7 +219,8 @@ void QMLReports::setContent(QTextDocument *doc, int beginPosition)
 
     if (beginPosition != 0)
     {
-        m_cursor->setPosition(beginPosition);
+        m_cursor->setPosition(beginPosition-1);
+        //m_cursor->movePosition(QTextCursor::PreviousWord);
         m_cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
         htmlText = m_cursor->selection().toHtml();
         m_cursor->select(QTextCursor::Document);
@@ -241,8 +243,8 @@ void QMLReports::setContent(QTextDocument *doc, int beginPosition)
             cursor->insertHtml(htmlText);
             cursor->setPosition(actPosi);
             cursor->movePosition(QTextCursor::Down);
-
             actPosi = cursor->position();
+
             cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
             cursor->removeSelectedText();
         }

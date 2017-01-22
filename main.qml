@@ -21,6 +21,18 @@ ApplicationWindow {
     <tr>
         <td colspan='3' align='center'>This is a second line with colspan</td>
     </tr>
+    <tr>
+        <td>Test</td><td>of</td><td>Table</td>
+    </tr>
+    <tr>
+        <td colspan='3' align='center'>This is a second line with colspan</td>
+    </tr>
+    <tr>
+        <td>Test</td><td>of</td><td>Table</td>
+    </tr>
+    <tr>
+        <td colspan='3' align='center'>This is a second line with colspan</td>
+    </tr>
 
 </table><br><br>";
 
@@ -53,7 +65,7 @@ improved performance and a cleaner implementation.
 <br><br>
 Qt Quick provides a flexible and easy-to-use framework for developing a wide range of applications from
 automotive HMIs to interactive desktop applications. Under the hood, it uses an OpenGL scene graph for rendering,
-allowing advanced effects and fluid animations even on low-powered systems. Complex components written entirely in
+allowing advanced effects and fluid animations even on low-powered  systems. Complex components written entirely in
 QML can cause noticeable performance problems especially on these low-powered systems. Qt Quick provides a C++ API
 to directly access its underlying scene graph for creating optimized components with better encapsulation.
 These components can then be reused from QML in the same way as the built-in Qt Quick items.
@@ -135,7 +147,7 @@ Element types that are shipped with KD Reports include:
         id: qmlReport
         fileName: docLocation+"/test.pdf"
         header: logo
-        contents:[titleContent, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent]
+        contents:[titleContent, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent, textContent2]
         footer: footer
         resolution: 300
         // Add confidential property
@@ -160,7 +172,7 @@ Element types that are shipped with KD Reports include:
     ReportContent {
         id: titleContent
         htmlText: titleReport
-        size: 10
+        size: 75
         weight: "bold"
         family: "helvetica"
         align: "center"
