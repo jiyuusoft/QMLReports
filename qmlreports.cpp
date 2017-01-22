@@ -194,7 +194,7 @@ void QMLReports::addContent()
     textOptionContent.setAlignment(Qt::AlignJustify);
     textOptionContent.setWrapMode(QTextOption::WordWrap);
     tdContent.setDefaultTextOption(textOptionContent);
-    tdContent.setTextWidth(m_writer->width()-mm2px(3));
+    tdContent.setTextWidth(m_writer->width());
 
     setContent(&tdContent);
 }
