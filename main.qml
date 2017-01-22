@@ -16,7 +16,10 @@ ApplicationWindow {
     property string table:"
 <table border=1 width=100%>
     <tr>
-        <td>Test</td>
+        <td>Test</td><td>of</td><td>Table</td>
+    </tr>
+    <tr>
+        <td colspan='3' align='center'>This is a second line with colspan</td>
     </tr>
 
 </table><br><br>";
@@ -132,7 +135,7 @@ Element types that are shipped with KD Reports include:
         id: qmlReport
         fileName: docLocation+"/test.pdf"
         header: logo
-        contents:[titleContent, tableContent, textContent, textContent2, tableContent, textContent, textContent2]
+        contents:[titleContent, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent]
         footer: footer
         resolution: 300
         // Add confidential property

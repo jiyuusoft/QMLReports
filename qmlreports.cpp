@@ -157,7 +157,7 @@ void QMLReports::addFooter()
     m_footerHeight = -mm2px(m_footer->yOffsetMM()) + tdFooter.documentLayout()->documentSize().height();
     m_endContentY = m_writer->height() - m_footerHeight;
     m_heightAvailable -= m_footerHeight;
-    m_rectContent.setBottom(m_endContentY-mm2px(3));
+    m_rectContent.setBottom(m_endContentY-mm2px(4));
 
 }
 
@@ -195,82 +195,79 @@ void QMLReports::addContent()
     tdContent.setDefaultTextOption(textOptionContent);
     tdContent.setTextWidth(m_writer->width());
 
-    printContent(&tdContent);
-
-
+    setContent(&tdContent);
 }
 
-void QMLReports::printContent(QTextDocument *doc, int beginPosition)
+void QMLReports::setContent(QTextDocument *doc, int beginPosition)
 {
     doc->clear();
+    QString htmlText;
     m_cursor = new QTextCursor(doc);
     m_cursor->insertHtml(m_totalHtml);
-    int textLen = m_cursor->selectionEnd()-beginPosition;
-    int docHeight = doc->documentLayout()->documentSize().height();
+
+    int lenTextToPrint = m_cursor->selectionEnd()-beginPosition;
 
     qDebug() << "   ";
     qDebug() << "============";
     qDebug() << "Page n°" << m_nbPage;
-    qDebug() << "Initial TextDoc height" << docHeight;
-    qDebug() << "Total Available" << m_nbPage * m_rectContent.height();
-    qDebug() << "TextLen to print" << textLen;
+    qDebug() << "Initial text lenght" << m_cursor->selectionEnd();
+    qDebug() << "Begin position" << beginPosition;
+    qDebug() << "Text to print" << lenTextToPrint;
 
-    //How do if the first line is empty (ie: <br>,...) ??.
+    //How do if the first line is empty (eg: <br>,...) ??.
 
     if (beginPosition != 0)
     {
         m_cursor->setPosition(beginPosition);
         m_cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
-        m_totalHtml = m_cursor->selection().toHtml();
+        htmlText = m_cursor->selection().toHtml();
+        m_cursor->select(QTextCursor::Document);
+        m_cursor->removeSelectedText();
+        m_cursor->insertHtml(htmlText);
+    }
+    else {
+        htmlText = m_totalHtml;
     }
 
-    int actPosi = beginPosition;
-    if (docHeight > m_nbPage * m_rectContent.height()){
+    qDebug() << "Current TextDoc height" << doc->documentLayout()->documentSize().height();
+    qDebug() << "Available per page" << m_rectContent.height();
+
+    int actPosi = 0;
+    if (doc->documentLayout()->documentSize().height() > m_rectContent.height()){
         doc->clear();
         while(doc->documentLayout()->documentSize().height() < m_rectContent.height())
         {
             QTextCursor *cursor = new QTextCursor(doc);
-            cursor->insertHtml(m_totalHtml);
+            cursor->insertHtml(htmlText);
             cursor->setPosition(actPosi);
             cursor->movePosition(QTextCursor::Down);
 
-            cursor->movePosition(QTextCursor::Down);
             actPosi = cursor->position();
             cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
             cursor->removeSelectedText();
         }
-        m_painter->save();
-        m_painter->translate(m_rectContent.topLeft());
-        doc->drawContents(m_painter);
-        m_painter->restore();
-        qDebug() << "The next begin position will be" << actPosi;
+        paintContent(doc);
 
-        if (actPosi < textLen){
+        m_alreadyPaint += actPosi;
+        qDebug() << "Last Position" << actPosi;
+        qDebug() << "Already print" << m_alreadyPaint;
+        if (actPosi < lenTextToPrint){
             newPage();
-            printContent(doc, actPosi);
+            setContent(doc, m_alreadyPaint);
         }
     }
     else {
-        doc->clear();
-        QTextCursor *cursor = new QTextCursor(doc);
-        cursor->insertHtml(m_totalHtml);
-        m_painter->save();
-        m_painter->translate(m_rectContent.topLeft());
-        doc->drawContents(m_painter);
-        m_painter->restore();
+        paintContent(doc);
     }
-
-
-
-
 }
 
-int QMLReports::checkDoc(int posi)
+void QMLReports::paintContent(QTextDocument *doc)
 {
-    return posi;
+    m_painter->save();
+    m_painter->translate(m_rectContent.topLeft());
+    doc->drawContents(m_painter);
+    m_painter->restore();
 }
-
-
 
 void QMLReports::print()
 {
@@ -299,5 +296,6 @@ void QMLReports::print()
         QDesktopServices::openUrl(QUrl("file:"+m_fileName));
         m_contentCompleted = false;
         m_totalHtml = "";
+        m_alreadyPaint = 0;
     }
 }

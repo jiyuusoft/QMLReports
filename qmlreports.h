@@ -68,9 +68,9 @@ private slots:
     void addFooter();
     void addConfidential();
     void addContent();
-    void printContent(QTextDocument *doc, int beginPosition=0);
+    void setContent(QTextDocument *doc, int beginPosition=0);
     void newPage();
-    int checkDoc(int posi);
+    void paintContent(QTextDocument *doc);
 
 private:
     QPainter *m_painter = 0;
@@ -89,8 +89,9 @@ private:
     qreal m_heightNecessary;
     QString m_totalHtml;
     qreal m_logoHeight, m_footerHeight;
-    bool m_contentCompleted;
-    int m_nbPage;
+    bool m_contentCompleted = false;
+    int m_nbPage = 0;
+    int m_alreadyPaint = 0;
 
     qreal m_beginContentY;
     qreal m_endContentY;
