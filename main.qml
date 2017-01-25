@@ -81,7 +81,7 @@ The talk is aimed at developers with minimal OpenGL experience. It will briefly 
 concepts to get you started writing a custom Qt Quick item.<br><br><br>
 
 
-<div style='font-size:60px'>KD Reports creates all kinds of reports from within Qt applications.</div>
+<div style='font-size:20px'>KD Reports creates all kinds of reports from within Qt applications.</div>
 <br><br>
 KD Reports generates printable and exportable reports from code and from XML descriptions.
 Reports may contain text paragraphs, tables, headlines, charts, headers and footers, and more.
@@ -105,7 +105,7 @@ They appear behind the report contents on every page.  Headers and footers can c
 The created reports can be shown in a preview dialog that is part of KD Reports.
 They can be saved to PDF files or sent directly to a printer.
 <br><br>
-<div style='font-size:60px'>Creating a Report</div><br><br>
+<div style='font-size:20px'>Creating a Report</div><br><br>
 
 Creating a report always starts with creating a KDReports::Report object.  Then, there are two basic modes of operation:
 <ul>
@@ -116,7 +116,7 @@ Creating a report always starts with creating a KDReports::Report object.  Then,
         staff can be tasked with creating the report structure.</li>
 </ul>
 
-<div style='font-size:60px'>Elements of a Report</div>
+<div style='font-size:20px'>Elements of a Report</div>
 <br><br>
 Reports may contain any number of supported elements.  Developers can also add their own custom element types.
 Element types that are shipped with KD Reports include:
@@ -149,13 +149,13 @@ Element types that are shipped with KD Reports include:
         header: logo
         contents:[titleContent, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent, textContent2]
         footer: footer
-        resolution: 300
+        resolution: 96
         // Add confidential property
     }
 
     ReportHeader {
         id: logo
-        htmlText: "<img src='qrc:/img/Qt.png'>"
+        htmlText: "<img height=100 src='qrc:/img/Qt.png'>"
         align: "left"
     }
 
@@ -165,14 +165,14 @@ Element types that are shipped with KD Reports include:
         //center: true
         align: "right"
         htmlText: "
-<div style='color:blue ; font-family:verdana ; font-size:30px ;'>Ceci est un pied de page</div><br>
-<img src='qrc:/img/kdab.jpeg'>"
+<div style='color:blue ; font-family:verdana ; font-size:10px ;'>Ceci est un pied de page</div><br>
+<img height=30 src='qrc:/img/kdab.jpeg'>"
     }
 
     ReportContent {
         id: titleContent
         htmlText: titleReport
-        size: 75
+        size: 16
         weight: "bold"
         family: "helvetica"
         align: "center"
@@ -182,7 +182,7 @@ Element types that are shipped with KD Reports include:
     ReportContent {
         id: tableContent
         htmlText: table
-        size: 30
+        size: 10
         family: "verdana"
         style: "italic"
     }
@@ -190,7 +190,7 @@ Element types that are shipped with KD Reports include:
     ReportContent {
         id: textContent
         htmlText: textReport
-        size: 30
+        size: 12
         family: "verdana"
         color: "blue"
         align: "justify"
@@ -199,7 +199,7 @@ Element types that are shipped with KD Reports include:
     ReportContent {
         id: textContent2
         htmlText: textReport2
-        size: 30
+        size: 9
         family: "verdana"
         color: "green"
         align: "justify"

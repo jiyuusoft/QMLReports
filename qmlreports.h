@@ -13,6 +13,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QTextDocumentFragment>
 #include <QTime>
+#include <QPrinter>
 
 #include "qmlreportsheader.h"
 #include "qmlreportsfooter.h"
@@ -62,6 +63,7 @@ public slots:
     void print();
     void import();
     QString setFormat(QMLReportsElement *element);
+    void test();
 
 private slots:
     void addHeader();
@@ -73,9 +75,7 @@ private slots:
     void paintContent(QTextDocument *doc);
 
 private:
-    QPainter *m_painter = 0;
     QPdfWriter *m_writer = 0;
-    QTextCursor *m_cursor = 0;
     QRectF m_rectContent;
     QString m_fileName;
 
