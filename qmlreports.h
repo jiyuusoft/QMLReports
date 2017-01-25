@@ -31,6 +31,7 @@ class QMLReports : public QObject
     Q_PROPERTY(QMLReportsHeader *header READ header WRITE setHeader)
     Q_PROPERTY(QMLReportsFooter *footer READ footer WRITE setFooter)
     Q_PROPERTY(QQmlListProperty<QMLReportsContent> contents READ contents)
+    Q_PROPERTY(bool confidential READ confidential WRITE setConfidential)
 
 public:
     QMLReports(QObject *parent = 0);
@@ -54,6 +55,9 @@ public:
     int contentsCount() const;
     QMLReportsContent *content(int) const;
 
+    bool confidential() const;
+    void setConfidential(const bool &confidential);
+
 signals:
     void fileNameChanged();
 
@@ -66,35 +70,42 @@ public slots:
     void test();
 
 private slots:
-    void addHeader();
-    void addFooter();
-    void addConfidential();
+    void createHeader();
+    void createFooter();
+    void createConfidential();
     void addContent();
-    void setContent(QTextDocument *doc, int beginPosition=0);
-    void newPage();
-    void paintContent(QTextDocument *doc);
 
 private:
     QPdfWriter *m_writer = 0;
     QRectF m_rectContent;
     QString m_fileName;
+    bool m_confidential = false;
 
     int m_resolution = 300;
     qreal m_margins = 10;
-    QMLReportsHeader *m_header = 0;
-    QMLReportsFooter *m_footer = 0;
+    QMLReportsHeader *m_qmlHeader = 0;
+    QMLReportsFooter *m_qmlFooter = 0;
     QList<QMLReportsContent *> m_contents; // how initialize ???
     qreal m_lastY;
     qreal m_heightAvailable;
     qreal m_heightNecessary;
     QString m_totalHtml;
-    qreal m_logoHeight, m_footerHeight;
+    qreal m_logoHeight, m_qmlFooterHeight;
     bool m_contentCompleted = false;
     int m_nbPage = 0;
     int m_alreadyPaint = 0;
 
     qreal m_beginContentY;
     qreal m_endContentY;
+
+
+    ///to create report
+    QTextDocument *m_tdHeader;
+    QTextDocument *m_tdFooter;
+    QTextDocument *m_tdConfidential;
+    QRectF m_rectPrinter;
+    QSizeF m_headerSize;
+    QSizeF m_footerSize;
 };
 
 #endif // QMLREPORTS_H
