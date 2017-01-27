@@ -43,3 +43,5 @@ HEADERS += \
     qmlreportselement.h \
     qmlreportsconfidential.h \
     qmlreportsheader.h
+
+DISTFILES +=

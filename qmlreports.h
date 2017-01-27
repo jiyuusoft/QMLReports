@@ -14,6 +14,7 @@
 #include <QTextDocumentFragment>
 #include <QTime>
 #include <QPrinter>
+#include <QStringList>
 
 #include "qmlreportsheader.h"
 #include "qmlreportsfooter.h"
@@ -26,11 +27,14 @@ class QMLReports : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
+    Q_PROPERTY(QString model READ model WRITE setModel)
+    Q_PROPERTY(QString modelStyle READ modelStyle WRITE setModelStyle)
     Q_PROPERTY(int resolution READ resolution WRITE setResolution)
     Q_PROPERTY(qreal margins READ margins WRITE setMargins)
     Q_PROPERTY(QMLReportsHeader *header READ header WRITE setHeader)
     Q_PROPERTY(QMLReportsFooter *footer READ footer WRITE setFooter)
     Q_PROPERTY(QQmlListProperty<QMLReportsContent> contents READ contents)
+    Q_PROPERTY(QVariantList dataModel READ dataModel WRITE setDataModel)  //change to modelData
     Q_PROPERTY(bool confidential READ confidential WRITE setConfidential)
 
 public:
@@ -38,6 +42,12 @@ public:
 
     QString fileName() const;
     void setFileName(const QString &fileName);
+
+    QString model() const;
+    void setModel(const QString &model);
+
+    QString modelStyle() const;
+    void setModelStyle(const QString &modelStyle);
 
     int resolution() const;
     void setResolution(const int &resolution);
@@ -54,6 +64,9 @@ public:
     QQmlListProperty<QMLReportsContent> contents();
     int contentsCount() const;
     QMLReportsContent *content(int) const;
+
+    QVariantList dataModel() const;
+    void setDataModel(const QVariantList &dataModel);
 
     bool confidential() const;
     void setConfidential(const bool &confidential);
@@ -79,6 +92,10 @@ private:
     QPdfWriter *m_writer = 0;
     QRectF m_rectContent;
     QString m_fileName;
+    QString m_model = "";
+    QVariantList m_dataModel;
+    QString m_modelStyle;
+
     bool m_confidential = false;
 
     int m_resolution = 300;
@@ -86,6 +103,7 @@ private:
     QMLReportsHeader *m_qmlHeader = 0;
     QMLReportsFooter *m_qmlFooter = 0;
     QList<QMLReportsContent *> m_contents; // how initialize ???
+    QList<QStringList *> m_datasModel;
     qreal m_lastY;
     qreal m_heightAvailable;
     qreal m_heightNecessary;

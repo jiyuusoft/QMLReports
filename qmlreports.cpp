@@ -24,6 +24,12 @@ void QMLReports::setFileName(const QString &fileName)
     }
 }
 
+QString QMLReports::model() const {return m_model;}
+void QMLReports::setModel(const QString &model) {m_model = model;}
+
+QString QMLReports::modelStyle() const {return m_modelStyle;}
+void QMLReports::setModelStyle(const QString &modelStyle) {m_modelStyle = modelStyle;}
+
 int QMLReports::resolution() const {return m_resolution;}
 void QMLReports::setResolution(const int &resolution) {m_resolution = resolution;}
 
@@ -33,7 +39,8 @@ void QMLReports::setMargins(const qreal &margins) {m_margins = margins;}
 bool QMLReports::confidential() const {return m_confidential;}
 void QMLReports::setConfidential(const bool &confidential) {m_confidential = confidential;}
 
-
+QVariantList QMLReports::dataModel() const {return m_dataModel;}
+void QMLReports::setDataModel(const QVariantList &dataModel) {m_dataModel = dataModel;}
 
 QMLReportsHeader *QMLReports::header() const
 {
@@ -128,7 +135,7 @@ void QMLReports::createConfidential()
     m_tdConfidential->setDefaultTextOption(textOptionConfidential);
     m_tdConfidential->setPageSize(m_rectPrinter.size());
     m_tdConfidential->setHtml("<div style='color:OrangeRed  ; font-family:georgia ; font-style:normal ; "
-                           "font-size:300px ; font-weight:normal ; text-decoration:none '><pre>C  O  N  F  I  D  E  N  T  I  A  L</pre></div>");
+                              "font-size:300px ; font-weight:normal ; text-decoration:none '><pre>C  O  N  F  I  D  E  N  T  I  A  L</pre></div>");
 
 }
 
@@ -138,8 +145,6 @@ void QMLReports::addContent()
         QMLReportsContent *content = m_contents.at(i);
         m_totalHtml += setFormat(content);
     }
-
-
 }
 
 
@@ -175,9 +180,57 @@ void QMLReports::test()
 
     ///Setting up the center page
     QTextDocument *tdContent = new QTextDocument(this);
-    addContent();
-    tdContent->setHtml(m_totalHtml);
+    QTextOption textOptionContent;
+    QTextCursor cursor(tdContent);
+    textOptionContent.setWrapMode(QTextOption::WordWrap);
+    textOptionContent.setAlignment(Qt::AlignJustify);
+    tdContent->setDefaultTextOption(textOptionContent);
     tdContent->setPageSize(contentSize);
+
+    bool setModel = false;
+    QFile styleFile(m_modelStyle);
+    QString style;
+    if (styleFile.open(QFile::ReadOnly | QFile::Text))
+    {
+        QTextStream in(&styleFile);
+        style = in.readAll();
+    }
+
+    QFile model(m_model);
+    if (model.open(QFile::ReadOnly | QFile::Text))
+    { /// and check is html model
+        setModel = true;
+        /*
+        QTextStream in(&model);
+        m_totalHtml = in.readAll();
+        */
+        m_totalHtml = tdContent->resource(QTextDocument::HtmlResource, QUrl(m_model)).toString();
+        tdContent->addResource(QTextDocument::StyleSheetResource, QUrl( "style.css" ), style);
+
+        for (const auto i : m_dataModel)
+        {
+            QStringList tuple = i.toStringList();
+            m_totalHtml.replace("$"+tuple[0]+"$", tuple[1]);
+        }
+    }
+    else {
+        addContent();
+
+    }
+
+    cursor.insertHtml(m_totalHtml);
+
+    if (setModel)
+    {
+        QTextCursor tempCursor =  tdContent->find("<head>", 0);
+        qDebug() << tempCursor.position();
+    }
+
+    //tdContent->addResource(QTextDocument::HtmlResource, QUrl(m_model), m_totalHtml);
+    model.destroyed();
+    styleFile.destroyed();
+
+
 
     ///Setting up the rectangles for each section.
     QRectF headerRect = QRectF(QPoint(0,0), m_tdHeader->size().toSize());

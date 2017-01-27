@@ -1,84 +1,33 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.1
-import QtQuick.Layouts 1.3
-import QMLReports 1.0
-import Qt.labs.platform 1.0
 
-ApplicationWindow {
-    id: mainApp
-    visible: true
-    width: 200
-    height: 100
-    title: qsTr("QMLReports")
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
 
-    property string docLocation: StandardPaths.writableLocation(StandardPaths.DocumentsLocation).toString().split("file://").pop()
-
-    property string table:"
-<table border=1 width=100%>
-    <tr>
-        <td>Test</td><td>of</td><td>Table</td>
-    </tr>
-    <tr>
-        <td colspan='3' align='center'>This is a second line with colspan</td>
-    </tr>
-    <tr>
-        <td>Test</td><td>of</td><td>Table</td>
-    </tr>
-    <tr>
-        <td colspan='3' align='center'>This is a second line with colspan</td>
-    </tr>
-    <tr>
-        <td>Test</td><td>of</td><td>Table</td>
-    </tr>
-    <tr>
-        <td colspan='3' align='center'>This is a second line with colspan</td>
-    </tr>
-
-</table><br><br>";
-
-    property string titleReport: "THIS IS AN EXAMPLE OF<br>QMLREPORTS<br><br>";
-    property string textReport: "
-This is the main text of the example of QMLReports. Here, we write a text with blue color, verdana family, 30 for size, justif aling. With QMLReports, create PDF files is very
-simple and very fast. You can add header, footer and many contents. For each element you can use this properties : xOffsetMM, yOffsetMM, align, color, size, familiy, decoration,
-weight, style and htmlText.<br><br>
-<ul>
-    <li>xOffsetMM :</li>
-    <li>yOffsetMM :</li>
-    <li>align :</li>
-    <li>color :</li>
-    <li>size :</li>
-    <li>family :</li>
-    <li>decoration :</li>
-    <li>weight :</li>
-    <li>style :</li>
-    <li>htmlText :</li>
-</ul><br><br>
-";
-
-    property string textReport2: "Qt Quick and QML provide an easy way to rapidly develop customized,
-reusable components entirely within QML. As these components grow in complexity, performance and maintainability
+<h1>Test of QMLReport<br>Tool to generate PDF file from QML</h1>
+$val1$ and $val2$ provide an easy way to rapidly develop customized,
+reusable components entirely within $val2$. As these components grow in complexity, performance and maintainability
 often suffer, a drawback that is especially noticeable on low-powered embedded and mobile devices.
-In addition, some specialized components simply cannot be implemented by combining existing Qt Quick items in QML.
-For these cases, Qt Quick provides access to its underlying OpenGL scene graph via a C++ API.
+In addition, some specialized components simply cannot be implemented by combining existing $val1$ items in $val2$.
+For these cases, $val1$ provides access to its underlying OpenGL scene graph via a C++ API.
 Components created this way are more closely aligned to the underlying scene graph architecture allowing
 improved performance and a cleaner implementation.
 <br><br>
-Qt Quick provides a flexible and easy-to-use framework for developing a wide range of applications from
+$val1$ provides a flexible and easy-to-use framework for developing a wide range of applications from
 automotive HMIs to interactive desktop applications. Under the hood, it uses an OpenGL scene graph for rendering,
 allowing advanced effects and fluid animations even on low-powered  systems. Complex components written entirely in
-QML can cause noticeable performance problems especially on these low-powered systems. Qt Quick provides a C++ API
+$val2$ can cause noticeable performance problems especially on these low-powered systems. $val1$ provides a C++ API
 to directly access its underlying scene graph for creating optimized components with better encapsulation.
-These components can then be reused from QML in the same way as the built-in Qt Quick items.
+These components can then be reused from $val2$ in the same way as the built-in $val1$ items.
 <br><br>
-The focus of this talk will be describing the steps necessary to create a Qt Quick component using C++ and OpenGL.
-We will start with a custom component written entirely in QML and point out the performance and maintenance problems
+The focus of this talk will be describing the steps necessary to create a $val1$ component using C++ and OpenGL.
+We will start with a custom component written entirely in $val2$ and point out the performance and maintenance problems
 with this approach. We will then reimplement this component in C++ and OpenGL, step-by-step, so that by the end you’ll
-know enough to create your own C++ Qt Quick components. Finally we’ll compare the resulting component’s implementation
+know enough to create your own C++ $val1$ components. Finally we’ll compare the resulting component’s implementation
 and performance against the original to see the improvement. I will also briefly mention the QtQuickFrameBufferObject as
 an alternative and discuss when you would use it instead of the scene graph API.
 <br><br>
 The talk is aimed at developers with minimal OpenGL experience. It will briefly introduce enough of the basic OpenGL
-concepts to get you started writing a custom Qt Quick item.<br><br><br>
+concepts to get you started writing a custom $val1$ item.<br><br><br>
 
 
 <div style='font-size:20px'>KD Reports creates all kinds of reports from within Qt applications.</div>
@@ -140,80 +89,3 @@ Element types that are shipped with KD Reports include:
         store or print the created reports.
     </li>
 </ul>
-";
-
-
-    Report {
-        id: qmlReport
-        fileName: docLocation+"/test.pdf"
-        header: logo
-        contents:[titleContent, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent, textContent, textContent2, tableContent, textContent2]
-        footer: footer
-        resolution: 96
-        model: ":/model.html"
-        modelStyle: ":/style.css"
-        dataModel: [["val1", "Qt Quick"], ["val2", "QML"]]
-        // Add confidential property
-    }
-
-    ReportHeader {
-        id: logo
-        htmlText: "<img height=100 src='qrc:/img/Qt.png'>"
-        align: "left"
-    }
-
-    ReportFooter {
-        id: footer
-        yOffsetMM: 5
-        //center: true
-        align: "right"
-        htmlText: "
-<div style='color:blue ; font-family:verdana ; font-size:10px ;'>Ceci est un pied de page</div><br>
-<img height=30 src='qrc:/img/kdab.jpeg'>"
-    }
-
-    ReportContent {
-        id: titleContent
-        htmlText: titleReport
-        size: 16
-        weight: "bold"
-        family: "helvetica"
-        align: "center"
-        yOffsetMM: 15   // probleme de gestion de cette property
-    }
-
-    ReportContent {
-        id: tableContent
-        htmlText: table
-        size: 10
-        family: "verdana"
-        style: "italic"
-    }
-
-    ReportContent {
-        id: textContent
-        htmlText: textReport
-        size: 12
-        family: "verdana"
-        color: "blue"
-        align: "justify"
-    }
-
-    ReportContent {
-        id: textContent2
-        htmlText: textReport2
-        size: 9
-        family: "verdana"
-        color: "green"
-        align: "justify"
-    }
-
-    Button {
-        id: btn
-        x: 10; y: 10
-        text: "print"
-        onClicked: {
-            qmlReport.print()
-        }
-    }
-}

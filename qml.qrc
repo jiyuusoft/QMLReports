@@ -4,5 +4,7 @@
         <file>qtquickcontrols2.conf</file>
         <file>img/Qt.png</file>
         <file>img/kdab.jpeg</file>
+        <file>model.html</file>
+        <file>style.css</file>
     </qresource>
 </RCC>
