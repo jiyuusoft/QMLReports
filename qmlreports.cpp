@@ -187,7 +187,11 @@ void QMLReports::test()
     tdContent->setDefaultTextOption(textOptionContent);
     tdContent->setPageSize(contentSize);
 
+
+
     bool setModel = false;
+    QString htmlToAdd;
+
     QFile styleFile(m_modelStyle);
     QString style;
     if (styleFile.open(QFile::ReadOnly | QFile::Text))
@@ -199,13 +203,35 @@ void QMLReports::test()
     QFile model(m_model);
     if (model.open(QFile::ReadOnly | QFile::Text))
     { /// and check is html model
-        setModel = true;
-        /*
-        QTextStream in(&model);
-        m_totalHtml = in.readAll();
-        */
+
+        //QTextStream in(&model);
+        //m_totalHtml = in.readAll();
+
         m_totalHtml = tdContent->resource(QTextDocument::HtmlResource, QUrl(m_model)).toString();
-        tdContent->addResource(QTextDocument::StyleSheetResource, QUrl( "style.css" ), style);
+
+        QString css1 = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">";
+        QString css2 = "<link rel='stylesheet' type='text/css' href='style.css'>";
+
+        ///use REGEX....
+
+        //QRegExp regex("stylesheet");
+        if(!(m_totalHtml.contains(css1, Qt::CaseInsensitive) || m_totalHtml.contains(css2, Qt::CaseInsensitive)) && m_totalHtml.contains("<head>", Qt::CaseInsensitive))
+        //if (!m_totalHtml.contains(regex))
+        {
+            htmlToAdd = "<head>"+css1;
+            m_totalHtml.replace("<head>", htmlToAdd);
+        }
+        else if (!m_totalHtml.contains("html>"))
+        {
+            htmlToAdd = "<head>"+css1+"</head>";
+            m_totalHtml = htmlToAdd + m_totalHtml;
+        }
+        else {
+            htmlToAdd = "<html><head>"+css1+"</head>";
+            m_totalHtml = htmlToAdd + m_totalHtml+"</html>";
+        }
+
+        tdContent->addResource(QTextDocument::StyleSheetResource, QUrl("style.css"), style);
 
         for (const auto i : m_dataModel)
         {
@@ -215,16 +241,10 @@ void QMLReports::test()
     }
     else {
         addContent();
-
     }
 
     cursor.insertHtml(m_totalHtml);
 
-    if (setModel)
-    {
-        QTextCursor tempCursor =  tdContent->find("<head>", 0);
-        qDebug() << tempCursor.position();
-    }
 
     //tdContent->addResource(QTextDocument::HtmlResource, QUrl(m_model), m_totalHtml);
     model.destroyed();

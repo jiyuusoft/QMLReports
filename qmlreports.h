@@ -15,6 +15,7 @@
 #include <QTime>
 #include <QPrinter>
 #include <QStringList>
+#include <QRegExp>
 
 #include "qmlreportsheader.h"
 #include "qmlreportsfooter.h"
