@@ -1,7 +1,7 @@
 #include "qmlreports.h"
 
 
-QMLReports::QMLReports(QObject *parent){ }
+QMLReports::QMLReports(QObject *parent){ this->import(); }
 
 void QMLReports::import ()
 {
@@ -139,6 +139,81 @@ void QMLReports::createConfidential()
 
 }
 
+QTextDocument* QMLReports::createContent(QSizeF contentSize)
+{
+    ///Setting up the center page
+    QTextDocument *tdContent = new QTextDocument(this);
+    QTextOption textOptionContent;
+    QTextCursor cursor(tdContent);
+    textOptionContent.setWrapMode(QTextOption::WordWrap);
+    textOptionContent.setAlignment(Qt::AlignJustify);
+    tdContent->setDefaultTextOption(textOptionContent);
+    tdContent->setPageSize(contentSize);
+
+    QString htmlToAdd;
+
+    QFile styleFile(m_modelStyle);
+    QString style;
+    if (styleFile.open(QFile::ReadOnly | QFile::Text))
+    {
+        QTextStream in(&styleFile);
+        style = in.readAll();
+    }
+
+    QFile model(m_model);
+    if (model.open(QFile::ReadOnly | QFile::Text))
+    { /// and check is html model
+
+        //QTextStream in(&model);
+        //m_totalHtml = in.readAll();
+
+        m_totalHtml = tdContent->resource(QTextDocument::HtmlResource, QUrl(m_model)).toString();
+
+        QString css1 = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">";
+        QString css2 = "<link rel='stylesheet' type='text/css' href='style.css'>";
+
+        ///use REGEX....
+
+        //QRegExp regex("stylesheet");
+        if(!(m_totalHtml.contains(css1, Qt::CaseInsensitive) || m_totalHtml.contains(css2, Qt::CaseInsensitive)) && m_totalHtml.contains("<head>", Qt::CaseInsensitive))
+            //if (!m_totalHtml.contains(regex))
+        {
+            htmlToAdd = "<head>"+css1;
+            m_totalHtml.replace("<head>", htmlToAdd);
+        }
+        else if (!m_totalHtml.contains("html>"))
+        {
+            htmlToAdd = "<head>"+css1+"</head>";
+            m_totalHtml = htmlToAdd + m_totalHtml;
+        }
+        else {
+            htmlToAdd = "<html><head>"+css1+"</head>";
+            m_totalHtml = htmlToAdd + m_totalHtml+"</html>";
+        }
+
+        tdContent->addResource(QTextDocument::StyleSheetResource, QUrl("style.css"), style);
+
+        for (const auto i : m_dataModel)
+        {
+            QStringList tuple = i.toStringList();
+            m_totalHtml.replace("$"+tuple[0]+"$", tuple[1]);
+        }
+    }
+    else {
+        addContent();
+    }
+
+    cursor.insertHtml(m_totalHtml);
+
+
+    //tdContent->addResource(QTextDocument::HtmlResource, QUrl(m_model), m_totalHtml);
+    model.destroyed();
+    styleFile.destroyed();
+
+    return tdContent;
+
+}
+
 void QMLReports::addContent()
 {
     for (int i=0; i < m_contents.length(); i++){
@@ -178,78 +253,7 @@ void QMLReports::test()
     ///Calculating the main document size for one page
     QSizeF contentSize(m_rectPrinter.width(), (m_rectPrinter.height() - m_headerSize.toSize().height() - m_footerSize.toSize().height()));
 
-    ///Setting up the center page
-    QTextDocument *tdContent = new QTextDocument(this);
-    QTextOption textOptionContent;
-    QTextCursor cursor(tdContent);
-    textOptionContent.setWrapMode(QTextOption::WordWrap);
-    textOptionContent.setAlignment(Qt::AlignJustify);
-    tdContent->setDefaultTextOption(textOptionContent);
-    tdContent->setPageSize(contentSize);
-
-
-
-    bool setModel = false;
-    QString htmlToAdd;
-
-    QFile styleFile(m_modelStyle);
-    QString style;
-    if (styleFile.open(QFile::ReadOnly | QFile::Text))
-    {
-        QTextStream in(&styleFile);
-        style = in.readAll();
-    }
-
-    QFile model(m_model);
-    if (model.open(QFile::ReadOnly | QFile::Text))
-    { /// and check is html model
-
-        //QTextStream in(&model);
-        //m_totalHtml = in.readAll();
-
-        m_totalHtml = tdContent->resource(QTextDocument::HtmlResource, QUrl(m_model)).toString();
-
-        QString css1 = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">";
-        QString css2 = "<link rel='stylesheet' type='text/css' href='style.css'>";
-
-        ///use REGEX....
-
-        //QRegExp regex("stylesheet");
-        if(!(m_totalHtml.contains(css1, Qt::CaseInsensitive) || m_totalHtml.contains(css2, Qt::CaseInsensitive)) && m_totalHtml.contains("<head>", Qt::CaseInsensitive))
-        //if (!m_totalHtml.contains(regex))
-        {
-            htmlToAdd = "<head>"+css1;
-            m_totalHtml.replace("<head>", htmlToAdd);
-        }
-        else if (!m_totalHtml.contains("html>"))
-        {
-            htmlToAdd = "<head>"+css1+"</head>";
-            m_totalHtml = htmlToAdd + m_totalHtml;
-        }
-        else {
-            htmlToAdd = "<html><head>"+css1+"</head>";
-            m_totalHtml = htmlToAdd + m_totalHtml+"</html>";
-        }
-
-        tdContent->addResource(QTextDocument::StyleSheetResource, QUrl("style.css"), style);
-
-        for (const auto i : m_dataModel)
-        {
-            QStringList tuple = i.toStringList();
-            m_totalHtml.replace("$"+tuple[0]+"$", tuple[1]);
-        }
-    }
-    else {
-        addContent();
-    }
-
-    cursor.insertHtml(m_totalHtml);
-
-
-    //tdContent->addResource(QTextDocument::HtmlResource, QUrl(m_model), m_totalHtml);
-    model.destroyed();
-    styleFile.destroyed();
-
+    QTextDocument *tdContent = createContent(contentSize);
 
 
     ///Setting up the rectangles for each section.

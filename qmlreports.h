@@ -87,6 +87,7 @@ private slots:
     void createHeader();
     void createFooter();
     void createConfidential();
+    QTextDocument* createContent(QSizeF contentSize);
     void addContent();
 
 private:

@@ -1,4 +1,8 @@
 # QMLReports
 
-Create a PDF file from QML.<br>
-See licence to use
+QMLReport allow to create a PDF file from a QML code.
+See licence to use.
+
+USING :
+
+In your project add

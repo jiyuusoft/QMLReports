@@ -1,16 +1,16 @@
-QT += qml quick printsupport
+QT += qml quick printsupport pdf
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    qmlreports.cpp \
+SOURCES += qmlreports.cpp \
     qmlreportsfooter.cpp \
     qmlreportscontent.cpp \
     qmlreportselement.cpp \
     qmlreportsconfidential.cpp \
-    qmlreportsheader.cpp
+    qmlreportsheader.cpp \
+    example/main.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += example/qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -44,4 +44,8 @@ HEADERS += \
     qmlreportsconfidential.h \
     qmlreportsheader.h
 
-DISTFILES +=
+DISTFILES += \
+    example/example.pro
+
+SUBDIRS += \
+    example/example.pro
