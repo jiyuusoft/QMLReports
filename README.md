@@ -19,33 +19,33 @@ or
 
 Add in your *.pro file this lines:
 
-      QMLREPORTSDIR = Path_to_source_of_QMLReports
-      include($${QMLREPORTSDIR}/QMLReports.pri)
+QMLREPORTSDIR = Path_to_source_of_QMLReports
+include($${QMLREPORTSDIR}/QMLReports.pri)
 
 
 And include qmlreports.h in your main file.
 Here an example of your main file (main.cpp), with source of QMLReports in subdirectory QMLReports :
 
 
-      #include <QGuiApplication>
-      #include <QQmlApplicationEngine>
-      #include <QStandardPaths>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QStandardPaths>
 
-      #include "QMLReports/qmlreports.h"
+#include "QMLReports/qmlreports.h"
 
 
-      int main(int argc, char *argv[])
-      {
-          QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-          QGuiApplication app(argc, argv);
+int main(int argc, char *argv[])
+{
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication app(argc, argv);
 
-          QMLReports report;
+    QMLReports report;
 
-          QQmlApplicationEngine engine;
-          engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+    QQmlApplicationEngine engine;
+    engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
-          return app.exec();
-      }
+    return app.exec();
+}
 
 
 ==============================================
