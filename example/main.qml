@@ -143,6 +143,7 @@ Element types that are shipped with KD Reports include:
 ";
 
 
+
     Report {
         id: qmlReport
         fileName: docLocation+"/test.pdf"
@@ -207,6 +208,7 @@ Element types that are shipped with KD Reports include:
         color: "green"
         align: "justify"
     }
+
 
     Button {
         id: btn
