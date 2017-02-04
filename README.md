@@ -4,7 +4,7 @@ QMLReport allow to create a PDF file from a QML code.
 See licence to use.
 
 ---------------------------------------------
-1 - HOW GET AND INSTALL QMLReports
+### 1 - HOW GET AND INSTALL QMLReports
 
 Clone or download QMLReports from git in your project :
 
@@ -18,7 +18,7 @@ or
 
 
 ---------------------------------------------
-2 - HOW TO INCLUDE IN YOUR QMAKE PROJECT :
+### 2 - HOW TO INCLUDE IN YOUR QMAKE PROJECT :
 
 Add in your *.pro file this lines:
 
@@ -52,7 +52,7 @@ Here an example of your main file (main.cpp), with source of QMLReports in subdi
 
 
 ---------------------------------------------
-3 - HOW TO USE QMLREPORTS :
+### 3 - HOW TO USE QMLREPORTS :
 
 In your QML file, add thise line :
 import QMLReports 1.x   (currently x = 0)
@@ -65,7 +65,7 @@ Four components are available :
    - ReportContent
 
 ============================================
-3.1 - Report  :
+#### 3.1 - Report  :
 
 A Report's properties which are available are :
 
