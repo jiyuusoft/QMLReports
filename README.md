@@ -8,11 +8,11 @@ See licence to use.
 
 Clone or download QMLReports from git in your project :
 
-      https://github.com/jiyuusoft/QMLReports
+    https://github.com/jiyuusoft/QMLReports
 
 or
 
-      git clone https://github.com/jiyuusoft/QMLReports.git
+    git clone https://github.com/jiyuusoft/QMLReports.git
 
 
 
