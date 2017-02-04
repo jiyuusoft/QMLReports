@@ -64,6 +64,7 @@ Four components are available :
 ============================================
 3.1 - Report 
 A Report's properties which are available are :
+
     fileName : -string-
     header : -ReportHeader--
     contents: -list of ReportContent-
