@@ -7,8 +7,11 @@ See licence to use.
 1 - HOW GET AND INSTALL QMLReports
 
 Clone or download QMLReports from git in your project :
+
       https://github.com/jiyuusoft/QMLReports
+
 or
+
       git clone https://github.com/jiyuusoft/QMLReports.git
 
 
@@ -62,7 +65,8 @@ Four components are available :
    - ReportContent
 
 ============================================
-3.1 - Report 
+3.1 - Report  :
+
 A Report's properties which are available are :
 
     fileName : -string-
