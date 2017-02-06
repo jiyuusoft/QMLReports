@@ -90,16 +90,18 @@ Can contain one `ReportHeader`, one `ReportFooter` and one or many `ReportConten
 
 Currently, ReportHeader, ReportFooter and ReportContent inherit of the same object : QReportsElement. This properties are : 
 
-    color: *string*
-    family: *string*
-    style: *string*
-    weight: *string*
-    decoration: *string*
-    htmlText: *string*
-    align: *string*
-    xOffsetMM: *float*
-    yOffsetMM: *float*
-    size: *int*
+```
+color: *string*
+family: *string*
+style: *string*
+weight: *string*
+decoration: *string*
+htmlText: *string*
+align: *string*
+xOffsetMM: *float*
+yOffsetMM: *float*
+size: *int*
+```
 
 The properties color, family, style, weight, decoration, align are html tag. See http://doc.qt.io/qt-5/richtext-html-subset.html for more informations
 
