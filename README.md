@@ -91,8 +91,8 @@ Can contain one `ReportHeader`, one `ReportFooter` and one or many `ReportConten
 Currently, ReportHeader, ReportFooter and ReportContent inherit of the same object : QReportsElement. This properties are : 
 
 ```
-color: *string*
-family: *string*
+color: //string
+family: //string
 style: *string*
 weight: *string*
 decoration: *string*
