@@ -90,7 +90,7 @@ can contain one ReportHeader, one ReportFooter and one or many ReportContent.
 
 Currently, ReportHeader, ReportFooter and ReportContent inherit of the same object : QReportsElement. This properties are : 
 
-    color: -string-
+    color: _string_
     family: *string*
     style: *string*
     weight: *string*
