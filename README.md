@@ -1,10 +1,10 @@
-# QMLReports
+# QMLREPORTS
 
 QMLReport allow to create a PDF file from a QML code.
 See licence to use.
 
 ---------------------------------------------
-### 1 - HOW GET AND INSTALL QMLReports
+### 1 - HOW GET AND INSTALL QMLREPORTS
 
 Clone or download QMLReports from git in your project :
 
@@ -69,16 +69,37 @@ Four components are available :
 
 A Report's properties which are available are :
 
-    fileName : -string-
+    fileName : -string : path of pdf File-
+    margins: -float-
     header : -ReportHeader--
     contents: -list of ReportContent-
     footer: -ReportFooter-
     resolution: -int-
     model: -string: path of html file-
     modelStyle: -string: path of css file-
-    dataModel: -list of list with 2 elements eg :[["val1", "Qt Quick"], ["val2", "QML"]]-
+    dataModel: -list of list with 2 elements eg :[["key1", "Val1"], ["key2", "Val2"]]-
+    confidential: -bool-
 
 Note : if you use model, the contents property are disable.
 
 
 can contain one ReportHeader, one ReportFooter and one or many ReportContent.
+
+============================================
+#### 3.1 - ReportHeader, ReportFooter, ReportContent  :
+
+Currently, ReportHeader, ReportFooter and ReportContent inherit of the same object : QReportsElement. This properties are : 
+
+    color: *string*
+    family: *string*
+    style: *string*
+    weight: *string*
+    decoration: *string*
+    htmlText: *string*
+    align: *string*
+    xOffsetMM: *float*
+    yOffsetMM: *float*
+    size: *int*
+
+The properties color, family, style, weight, decoration, align are html tag. See http://doc.qt.io/qt-5/richtext-html-subset.html for more informations
+

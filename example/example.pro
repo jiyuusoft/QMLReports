@@ -1,8 +1,17 @@
+QMLREPORTSDIR=..
+include($${QMLREPORTSDIR}/QMLReports.pri)
+
 QT += qml quick
 
 CONFIG += c++11
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    ../qmlreportsheader.cpp \
+    ../qmlreportsfooter.cpp \
+    ../qmlreportselement.cpp \
+    ../qmlreportscontent.cpp \
+    ../qmlreportsconfidential.cpp \
+    ../qmlreports.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,6 +37,13 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+HEADERS += \
+    ../qmlreportsheader.h \
+    ../qmlreportsfooter.h \
+    ../qmlreportselement.h \
+    ../qmlreportscontent.h \
+    ../qmlreportsconfidential.h \
+    ../qmlreports.h
 
-QMLREPORTSDIR=QMLReports
-include($${QMLREPORTSDIR}/QMLReports.pri)
+DISTFILES += \
+    ../README.md

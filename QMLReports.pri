@@ -2,16 +2,16 @@ QT += gui core qml printsupport
 
 CONFIG += c++11
 
-SOURCES += qmlreports.cpp \
-    qmlreportsfooter.cpp \
-    qmlreportscontent.cpp \
-    qmlreportselement.cpp \
-    qmlreportsconfidential.cpp \
-    qmlreportsheader.cpp \
+SOURCES += $${QMLREPORTSDIR}\qmlreports.cpp \
+    $${QMLREPORTSDIR}\qmlreportsfooter.cpp \
+    $${QMLREPORTSDIR}\qmlreportscontent.cpp \
+    $${QMLREPORTSDIR}\qmlreportselement.cpp \
+    $${QMLREPORTSDIR}\qmlreportsconfidential.cpp \
+    $${QMLREPORTSDIR}\qmlreportsheader.cpp \
 
-HEADERS += qmlreports.h \
-    qmlreportsfooter.h \
-    qmlreportscontent.h \
-    qmlreportselement.h \
-    qmlreportsconfidential.h \
-    qmlreportsheader.h
+HEADERS += $${QMLREPORTSDIR}\qmlreports.h \
+    $${QMLREPORTSDIR}\qmlreportsfooter.h \
+    $${QMLREPORTSDIR}\qmlreportscontent.h \
+    $${QMLREPORTSDIR}\qmlreportselement.h \
+    $${QMLREPORTSDIR}\qmlreportsconfidential.h \
+    $${QMLREPORTSDIR}\qmlreportsheader.h

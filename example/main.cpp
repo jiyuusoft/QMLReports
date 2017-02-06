@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "QMLReports/qmlreports.h"
+#include "../qmlreports.h"
 
 
 int main(int argc, char *argv[])
