@@ -83,14 +83,14 @@ A Report's properties which are available are :
 Note : if you use model, the contents property are disable.
 
 
-can contain one ReportHeader, one ReportFooter and one or many ReportContent.
+Can contain one `ReportHeader`, one `ReportFooter` and one or many `ReportContent`.
 
 ============================================
 #### 3.1 - ReportHeader, ReportFooter, ReportContent  :
 
 Currently, ReportHeader, ReportFooter and ReportContent inherit of the same object : QReportsElement. This properties are : 
 
-    color: ~~string~~
+    color: *string*
     family: *string*
     style: *string*
     weight: *string*
