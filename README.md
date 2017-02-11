@@ -6,7 +6,9 @@ See licence to use.
 ---------------------------------------------
 ### 1 - HOW GET AND INSTALL QMLREPORTS
 
-Clone or download QMLReports from git in your project :
+#### 1.1 - GET QMLREPORTS :
+
+Clone or download QMLReports from git :
 
     https://github.com/jiyuusoft/QMLReports
 
@@ -14,23 +16,18 @@ or
 
     git clone https://github.com/jiyuusoft/QMLReports.git
 
-
-
-
----------------------------------------------
-### 2 - HOW TO INCLUDE IN YOUR QMAKE PROJECT :
-
-#### 2.1 - FOR DESKTOP DEVICE (tested on Mac) :
+============================================
+#### 1.2 - INSTALL FOR DESKTOP DEVICE (tested on Mac) :
 
 In the folder downloaded :
     
     qmake
     make
     sudo make install
-    
-#### 2.2 - FOR ANDROID DEVICE :
-
-Add in your *.pro file this lines:
+ 
+============================================
+#### 1.3 - INSTALL FOR ANDROID DEVICE :
+Paste the folder downloaded in your project and add in your *.pro file this lines:
 
     QMLREPORTSDIR = Path_to_source_of_QMLReports
     include($${QMLREPORTSDIR}/QMLReports.pri)
@@ -62,7 +59,7 @@ Here an example of your main file (main.cpp), with source of QMLReports in subdi
 
 
 ---------------------------------------------
-### 3 - HOW TO USE QMLREPORTS :
+### 2 - HOW TO USE QMLREPORTS :
 
 In your QML file, add thise line :
 import QMLReports 1.x   (currently x = 0)
@@ -75,7 +72,7 @@ Four components are available :
    - ReportContent
 
 ============================================
-#### 3.1 - Report  :
+#### 2.1 - Report  :
 
 A Report's properties which are available are :
 
@@ -96,7 +93,7 @@ Note : if you use model, the contents property are disable.
 Can contain one `ReportHeader`, one `ReportFooter` and one or many `ReportContent`.
 
 ============================================
-#### 3.1 - ReportHeader, ReportFooter, ReportContent  :
+#### 2.2 - ReportHeader, ReportFooter, ReportContent  :
 
 Currently, ReportHeader, ReportFooter and ReportContent inherit of the same object : QReportsElement. This properties are : 
 
