@@ -23,11 +23,12 @@ or
 #### 2.1 - FOR DESKTOP DEVICE (tested on Mac) :
 
 In the folder downloaded :
+    
     qmake
     make
     sudo make install
-
-
+    ```
+    
 #### 2.2 - FOR ANDROID DEVICE :
 
 Add in your *.pro file this lines:
