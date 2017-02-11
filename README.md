@@ -27,7 +27,6 @@ In the folder downloaded :
     qmake
     make
     sudo make install
-    ```
     
 #### 2.2 - FOR ANDROID DEVICE :
 
