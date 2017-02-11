@@ -20,6 +20,16 @@ or
 ---------------------------------------------
 ### 2 - HOW TO INCLUDE IN YOUR QMAKE PROJECT :
 
+#### 2.1 - FOR DESKTOP DEVICE (tested on Mac) :
+
+In the folder downloaded :
+    qmake
+    make
+    sudo make install
+
+
+#### 2.2 - FOR ANDROID DEVICE :
+
 Add in your *.pro file this lines:
 
     QMLREPORTSDIR = Path_to_source_of_QMLReports
