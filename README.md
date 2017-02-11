@@ -34,7 +34,7 @@ Paste the folder downloaded in your project and add in your *.pro file this line
 
 
 ============================================
-#### 1.3 - HOW INITIALIZE QMLREPORTS :
+#### 1.4 - HOW INITIALIZE QMLREPORTS :
 
 Here an example of your main file (main.cpp), with source of QMLReports in subdirectory QMLReports :
 
