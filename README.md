@@ -33,7 +33,9 @@ Paste the folder downloaded in your project and add in your *.pro file this line
     include($${QMLREPORTSDIR}/QMLReports.pri)
 
 
-And include qmlreports.h in your main file.
+============================================
+#### 1.3 - HOW INITIALIZE QMLREPORTS :
+
 Here an example of your main file (main.cpp), with source of QMLReports in subdirectory QMLReports :
 
 
