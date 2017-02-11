@@ -64,8 +64,9 @@ Here an example of your main file (main.cpp), with source of QMLReports in subdi
 ### 2 - HOW TO USE QMLREPORTS :
 
 In your QML file, add thise line :
-import QMLReports 1.x   (currently x = 0)
-
+```
+import QMLReports 1.x   //(currently x = 0)
+```
 
 Four components are available :
    - Report
