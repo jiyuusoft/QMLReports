@@ -6,14 +6,9 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    ../qmlreportsheader.cpp \
-    ../qmlreportsfooter.cpp \
-    ../qmlreportselement.cpp \
-    ../qmlreportscontent.cpp \
-    ../qmlreportsconfidential.cpp \
-    ../qmlreports.cpp
 
 RESOURCES += qml.qrc
+
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -37,13 +32,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-HEADERS += \
-    ../qmlreportsheader.h \
-    ../qmlreportsfooter.h \
-    ../qmlreportselement.h \
-    ../qmlreportscontent.h \
-    ../qmlreportsconfidential.h \
-    ../qmlreports.h
-
 DISTFILES += \
-    ../README.md
+    ../README.md \
+    style.css \
+    model.html \
+    model2.html
+
+SUBDIRS += \
+    ../QMLReports.pro
