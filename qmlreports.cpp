@@ -161,9 +161,11 @@ QTextDocument* QMLReports::createContent(QSizeF contentSize)
     }
 
     QFile model(m_model);
+    qDebug() << "Model is : " << model.fileName();
     if (model.open(QFile::ReadOnly | QFile::Text))
     { /// and check is html model
 
+        qDebug() << "Model is : " << model.fileName();
         //QTextStream in(&model);
         //m_totalHtml = in.readAll();
 
@@ -250,11 +252,12 @@ void QMLReports::test()
     createFooter();
     createConfidential();
 
+    ///
+
     ///Calculating the main document size for one page
     QSizeF contentSize(m_rectPrinter.width(), (m_rectPrinter.height() - m_headerSize.toSize().height() - m_footerSize.toSize().height()));
 
     QTextDocument *tdContent = createContent(contentSize);
-
 
     ///Setting up the rectangles for each section.
     QRectF headerRect = QRectF(QPoint(0,0), m_tdHeader->size().toSize());
@@ -270,7 +273,8 @@ void QMLReports::test()
     {
         painter.restore();
         painter.save();
-        painter.translate(0, headerRect.height()-currentRect.y());
+        ///prends en compte le yOffsetMM de l'header
+        painter.translate(0, headerRect.height()-currentRect.y()+mm2px(m_qmlHeader->yOffsetMM()));
         ///if less difficult, do 2 translate (headerRect.height and currentRect.y)
         tdContent->drawContents(&painter, currentRect);
 
@@ -289,8 +293,9 @@ void QMLReports::test()
         ///paint the header and footer
         painter.restore();
         painter.save();
+        painter.translate(mm2px(m_qmlHeader->xOffsetMM()), mm2px(m_qmlHeader->yOffsetMM()));
         m_tdHeader->drawContents(&painter, headerRect);
-        painter.translate(0, headerRect.height());
+        painter.translate(0-mm2px(m_qmlHeader->xOffsetMM()), headerRect.height()-mm2px(m_qmlHeader->yOffsetMM()));
         painter.translate(0, contentSize.height());
         m_tdFooter->drawContents(&painter, footerRect);
 
